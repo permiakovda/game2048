@@ -8,4 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Отключить класс .no-js т.к. js подключен
     bodyElem.classList.remove('no-js');
+
+    // убрать ненужный элемент с классом no-js-infoblock
+    const noJsInfoblock = document.querySelector('.no-js-infoblock');
+
+    noJsInfoblock.remove();
 });
