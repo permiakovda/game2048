@@ -1,5 +1,13 @@
-﻿.game-canvas{
-    border: 5px solid #9e9e9e;
-    border-radius: 5px;
-    background-color: #cfc0af;
+﻿@import '../config/config.css';
+
+/* var(--colors-border) */
+
+/* :root {
+  --colors-border: #9e9e9e;
+} */
+
+.game-canvas{
+    border: 5px solid var(--colors-border);
+    border-radius: var(--border-radius);
+    background-color: var(--colors-gameFildBG);
 }

@@ -22,3 +22,14 @@ class GameObject {
         this.isAlive = false; 
     }
 }
+
+// класс игрового поля
+class GameFild extends GameObject {
+  constructor(height, width) {
+    super(height, width); 
+  }
+
+  speak() {
+    console.log(`${this.name} лает.`);
+  }
+}
