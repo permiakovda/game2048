@@ -1,0 +1,14 @@
+/*----------------------------
+
+    На случий, если js не работает
+
+-----------------------------*/
+
+.no-js .no-js-infoblock {
+    display: block;
+    min-height: auto;
+    height: auto;
+    padding: 20px;
+    opacity: 1;
+    transition: 1s;
+}
