@@ -10,4 +10,6 @@
     border: 5px solid var(--colors-border);
     border-radius: var(--border-radius);
     background-color: var(--colors-gameFildBG);
+    display: block;
+    margin: 0 auto;
 }
