@@ -11,7 +11,6 @@
  * @param {boolean} [options.retina=false] - Включить поддержку Retina-экранов (умножает размер на devicePixelRatio).
  * @returns {{ canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D }} Объект с холстом и 2D-контекстом.
  */
-
 function gameFildRender (options = {}) {
     const settings = {
         width: 800,
@@ -64,5 +63,8 @@ function gameFildRender (options = {}) {
 
     return { canvas, ctx };
 }
+
+
+
 
 export { gameFildRender };

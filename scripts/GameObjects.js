@@ -1,21 +1,7 @@
 // общий класс для всех игровых сущностей
 class GameObject {
-    constructor(height, width) {
-        this.height = height;
-        this.width = width;
+    constructor() {
         this.isAlive = true;
-    }
-
-   // Метод, который обязаны переопределить дети
-    update(deltaTime) { 
-    if (new.target === GameObject) { 
-        throw new Error("Method 'update' must be implemented in subclass"); } 
-    }
-
-    render(context) {
-         // Общая логика отрисовки (например, рамка хитбокса) 
-         context.strokeStyle = 'red'; 
-         context.strokeRect(this.x, this.y, this.width, this.height); 
     }
 
     destroy() { 
@@ -25,7 +11,19 @@ class GameObject {
 
 // класс игрового поля
 class GameFild extends GameObject {
-  constructor(height, width) {
+  constructor(rows, cols) {
+    super(); 
+  }
+
+  // паттерн создания матрицы для игрового поля
+  createMatrix(rows, cols, value = 0) {
+    return Array.from({ length: rows }, () => Array.from({ length: cols }, () => value));
+  }
+}
+
+// класс игровой плитки
+class GameTile extends GameObject {
+  constructor(number) {
     super(height, width); 
   }
 
