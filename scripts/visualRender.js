@@ -64,7 +64,13 @@ function gameFildRender (options = {}) {
     return { canvas, ctx };
 }
 
+/**
+ * Визуализация игровой плитки
+ */
+function gameTileRender (coordinateX, coordinateY, size, ctx) {
+    ctx.fillStyle = '#000'; // Черный цвет для плитки
+    ctx.fillRect(coordinateX * size, coordinateY * size, size, size);
+    
+}
 
-
-
-export { gameFildRender };
+export { gameFildRender, gameTileRender };

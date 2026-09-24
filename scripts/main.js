@@ -1,15 +1,19 @@
-import { gameFildRender } from "./visualRender.js";
+import { gameFildRender, gameTileRender } from "./visualRender.js";
 
 document.addEventListener("DOMContentLoaded", (event) => {
     console.log("DOM fully loaded and parsed");
 
     const context2d = gameFildRender({
-      width: 1000,      
-      height: 1000,     
+      width: 400,      
+      height: 400,     
       id: 'game-canvas',
       parent: document.querySelector('.main'),
       retina: false
-  });
+    });
+
+    const tileSize = 40;
+
+    gameTileRender(0, 0, tileSize, context2d.ctx)
 
 
 
