@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     const tileSize = 100;
 
-    gameTileRender(0, 0, tileSize, context2d.ctx, 2, twoTitleBG, titleRadius)
+    gameTileRender(0, 0, tileSize, context2d.ctx, 2, twoTitleBG, titleRadius, 10)
 
 
 

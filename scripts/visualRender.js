@@ -71,42 +71,79 @@ function gameFildRender (options = {}) {
 /**
  * Визуализация игровой плитки
  */
-function gameTileRender (coordinateX, coordinateY, size, ctx, number, bgColor, radius) {
-    // ctx.fillStyle = twoTitleBG; // Черный цвет для плитки
-    // ctx.fillRect(coordinateX * size, coordinateY * size, size, size);
+// function gameTileRender (coordinateX, coordinateY, size, ctx, number, bgColor, radius) {
+//     // Защита от некорректных значений радиуса (например, если он больше половины стороны)
+//     const safeRadius = Math.min(radius, size / 2);
 
-    // ctx.strokeStyle = 'blue'; // цвет рамки
-    // ctx.lineWidth = 5; // толщина рамки
-    // ctx.strokeRect(x, y, sideLength, sideLength);
-
-    // // Можно добавить заливку, если нужно
-    // ctx.fillStyle = 'lightblue'; // цвет заливки
-    // ctx.fillRect(x, y, sideLength, sideLength);
-
-
-
-    // 1. Рисуем фигуру со скругленными углами
+//     ctx.beginPath();
     
-    // Защита от некорректных значений радиуса (например, если он больше половины стороны)
-    const safeRadius = Math.min(radius, size / 2);
+//     ctx.moveTo(coordinateX + safeRadius, coordinateY); // Начинаем с верхней грани, отступив слева на радиус
+//     ctx.lineTo(coordinateX + size - safeRadius, coordinateY); // Верхняя грань до начала правого верхнего угла
+//     ctx.quadraticCurveTo(coordinateX + size, coordinateY, coordinateX + size, coordinateY + safeRadius); // Правый верхний угол
+//     ctx.lineTo(coordinateX + size, coordinateY + size - safeRadius); // Правая грань до начала нижнего правого угла
+//     ctx.quadraticCurveTo(coordinateX + size, coordinateY + size, coordinateX + size - safeRadius, coordinateY + size); // Нижний правый угол
+//     ctx.lineTo(coordinateX + safeRadius, coordinateY + size); // Нижняя грань до левого нижнего угла
+//     ctx.quadraticCurveTo(coordinateX, coordinateY + size, coordinateX, coordinateY + size - safeRadius); // Нижний левый угол
+//     ctx.lineTo(coordinateX, coordinateY + safeRadius); // Левая грань до верхнего левого угла
+//     ctx.quadraticCurveTo(coordinateX, coordinateY, coordinateX + safeRadius, coordinateY); // Замыкание контура (левый верхний угол)
+//     ctx.closePath();
 
-    ctx.beginPath();
-    
-    ctx.moveTo(coordinateX + safeRadius, coordinateY); // Начинаем с верхней грани, отступив слева на радиус
-    ctx.lineTo(coordinateX + size - safeRadius, coordinateY); // Верхняя грань до начала правого верхнего угла
-    ctx.quadraticCurveTo(coordinateX + size, coordinateY, coordinateX + size, coordinateY + safeRadius); // Правый верхний угол
-    ctx.lineTo(coordinateX + size, coordinateY + size - safeRadius); // Правая грань до начала нижнего правого угла
-    ctx.quadraticCurveTo(coordinateX + size, coordinateY + size, coordinateX + size - safeRadius, coordinateY + size); // Нижний правый угол
-    ctx.lineTo(coordinateX + safeRadius, coordinateY + size); // Нижняя грань до левого нижнего угла
-    ctx.quadraticCurveTo(coordinateX, coordinateY + size, coordinateX, coordinateY + size - safeRadius); // Нижний левый угол
-    ctx.lineTo(coordinateX, coordinateY + safeRadius); // Левая грань до верхнего левого угла
-    ctx.quadraticCurveTo(coordinateX, coordinateY, coordinateX + safeRadius, coordinateY); // Замыкание контура (левый верхний угол)
-    ctx.closePath();
+//     // Заливаем цветом
+//     ctx.fillStyle = bgColor;
+//     ctx.fill();
 
-    // Заливаем цветом
-    ctx.fillStyle = bgColor;
+// }
+
+function gameTileRender(coordinateX, coordinateY, size, ctx, number, bgColor, radius, padding = 0) {
+    // Ограничиваем отступ: он не может быть меньше 0 и больше половины размера минус 1px (для минимального внутреннего квадрата)
+    const actualPadding = Math.max(0, Math.min(padding, (size - 1) / 2));
+
+    // Параметры внешней границы (полный размер)
+    const safeRadiusFull = Math.min(radius, size / 2);
+
+    // Параметры внутренней плитки (с учетом отступа)
+    const innerSize = size - 2 * actualPadding;
+    const safeRadiusInner = Math.min(radius, innerSize / 2);
+
+    // Координаты левого верхнего угла внутренней плитки
+    const innerX = coordinateX + actualPadding;
+    const innerY = coordinateY + actualPadding;
+
+    // 1. Рисуем внешнюю рамку (тень/границу)
+    // Если вам нужна просто плитка без визуального отступа, замените цвет на bgColor здесь и удалите второй блок fill()
+    ctx.fillStyle = 'rgba(0, 0, 0, 0)'; 
+    drawRoundedRect(ctx, coordinateX, coordinateY, size, safeRadiusFull);
     ctx.fill();
 
+    // 2. Рисуем основную плитку поверх рамки со смещением
+    ctx.fillStyle = bgColor;
+    drawRoundedRect(ctx, innerX, innerY, innerSize, safeRadiusInner);
+    ctx.fill();
+
+    // 3. Опционально: выводим число по центру всей области (визуально будет по центру внутренней плитки)
+    if (number !== undefined && number !== null && number.toString().trim() !== '') {
+        ctx.fillStyle = '#000';
+        // Размер шрифта привязан к доступной внутренней площади для сохранения пропорций
+        ctx.font = `${Math.floor(innerSize / 3)}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(number), coordinateX + size / 2, coordinateY + size / 2);
+    }
+}
+
+// Вспомогательная функция рисования закругленного прямоугольника (DRY — чтобы не дублировать путь дважды)
+function drawRoundedRect(ctx, x, y, side, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + side - r, y);
+    ctx.quadraticCurveTo(x + side, y, x + side, y + r);
+    ctx.lineTo(x + side, y + side - r);
+    ctx.quadraticCurveTo(x + side, y + side, x + side - r, y + side);
+    ctx.lineTo(x + r, y + side);
+    ctx.quadraticCurveTo(x, y + side, x, y + side - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
 }
 
 export { gameFildRender, gameTileRender };
