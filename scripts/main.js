@@ -1,3 +1,6 @@
+// импорт цветов из файла config.css
+const twoTitleBG = getComputedStyle(document.documentElement).getPropertyValue('--colors-twoTitleBG');
+
 import { gameFildRender, gameTileRender } from "./visualRender.js";
 
 document.addEventListener("DOMContentLoaded", (event) => {
@@ -13,7 +16,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     const tileSize = 40;
 
-    gameTileRender(0, 0, tileSize, context2d.ctx)
+    gameTileRender(0, 0, tileSize, context2d.ctx, 2, twoTitleBG, 5)
 
 
 

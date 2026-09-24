@@ -71,18 +71,55 @@ function gameFildRender (options = {}) {
 /**
  * Визуализация игровой плитки
  */
-function gameTileRender (coordinateX, coordinateY, size, ctx) {
-    ctx.fillStyle = twoTitleBG; // Черный цвет для плитки
-    ctx.fillRect(coordinateX * size, coordinateY * size, size, size);
+function gameTileRender (coordinateX, coordinateY, size, ctx, number, bgColor, radius) {
+    // ctx.fillStyle = twoTitleBG; // Черный цвет для плитки
+    // ctx.fillRect(coordinateX * size, coordinateY * size, size, size);
 
-    ctx.strokeStyle = 'blue'; // цвет рамки
-    ctx.lineWidth = 5; // толщина рамки
-    ctx.strokeRect(x, y, sideLength, sideLength);
+    // ctx.strokeStyle = 'blue'; // цвет рамки
+    // ctx.lineWidth = 5; // толщина рамки
+    // ctx.strokeRect(x, y, sideLength, sideLength);
 
-    // Можно добавить заливку, если нужно
-    ctx.fillStyle = 'lightblue'; // цвет заливки
-    ctx.fillRect(x, y, sideLength, sideLength);
+    // // Можно добавить заливку, если нужно
+    // ctx.fillStyle = 'lightblue'; // цвет заливки
+    // ctx.fillRect(x, y, sideLength, sideLength);
+
+
+
+    // 1. Рисуем фигуру со скругленными углами
     
+    // Защита от некорректных значений радиуса (например, если он больше половины стороны)
+    const safeRadius = Math.min(radius, size / 2);
+
+    ctx.beginPath();
+    
+    ctx.moveTo(coordinateX + safeRadius, coordinateY); // Начинаем с верхней грани, отступив слева на радиус
+    ctx.lineTo(coordinateX + size - safeRadius, coordinateY); // Верхняя грань до начала правого верхнего угла
+    ctx.quadraticCurveTo(coordinateX + size, coordinateY, coordinateX + size, coordinateY + safeRadius); // Правый верхний угол
+    ctx.lineTo(coordinateX + size, coordinateY + size - safeRadius); // Правая грань до начала нижнего правого угла
+    ctx.quadraticCurveTo(coordinateX + size, coordinateY + size, coordinateX + size - safeRadius, coordinateY + size); // Нижний правый угол
+    ctx.lineTo(coordinateX + safeRadius, coordinateY + size); // Нижняя грань до левого нижнего угла
+    ctx.quadraticCurveTo(coordinateX, coordinateY + size, coordinateX, coordinateY + size - safeRadius); // Нижний левый угол
+    ctx.lineTo(coordinateX, coordinateY + safeRadius); // Левая грань до верхнего левого угла
+    ctx.quadraticCurveTo(coordinateX, coordinateY, coordinateX + safeRadius, coordinateY); // Замыкание контура (левый верхний угол)
+    ctx.closePath();
+
+    // Заливаем цветом
+    ctx.fillStyle = bgColor;
+    ctx.fill();
+
 }
 
 export { gameFildRender, gameTileRender };
+
+
+
+
+
+
+
+
+
+
+
+
+
