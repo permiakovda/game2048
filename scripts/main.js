@@ -1,4 +1,5 @@
 // импорт цветов из файла config.css
+const titleRadius = getComputedStyle(document.documentElement).getPropertyValue('--border-radius').replace("px", "");
 const twoTitleBG = getComputedStyle(document.documentElement).getPropertyValue('--colors-twoTitleBG');
 
 import { gameFildRender, gameTileRender } from "./visualRender.js";
@@ -14,9 +15,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
       retina: false
     });
 
-    const tileSize = 40;
+    const tileSize = 100;
 
-    gameTileRender(0, 0, tileSize, context2d.ctx, 2, twoTitleBG, 5)
+    gameTileRender(0, 0, tileSize, context2d.ctx, 2, twoTitleBG, titleRadius)
 
 
 
