@@ -1,3 +1,7 @@
+// импорт цветов из файла config.css
+const twoTitleBG = getComputedStyle(document.documentElement).getPropertyValue('--colors-twoTitleBG');
+
+
 // модуль визуализации и рендера игрового поял и игровых плиток
 
 /**
@@ -68,8 +72,16 @@ function gameFildRender (options = {}) {
  * Визуализация игровой плитки
  */
 function gameTileRender (coordinateX, coordinateY, size, ctx) {
-    ctx.fillStyle = '#000'; // Черный цвет для плитки
+    ctx.fillStyle = twoTitleBG; // Черный цвет для плитки
     ctx.fillRect(coordinateX * size, coordinateY * size, size, size);
+
+    ctx.strokeStyle = 'blue'; // цвет рамки
+    ctx.lineWidth = 5; // толщина рамки
+    ctx.strokeRect(x, y, sideLength, sideLength);
+
+    // Можно добавить заливку, если нужно
+    ctx.fillStyle = 'lightblue'; // цвет заливки
+    ctx.fillRect(x, y, sideLength, sideLength);
     
 }
 
