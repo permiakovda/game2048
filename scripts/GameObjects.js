@@ -11,8 +11,11 @@ class GameObject {
 
 // класс игрового поля
 class GameFild extends GameObject {
+  // конструктор принимает размер игрового поля
   constructor(rows, cols) {
-    super(); 
+    super();
+    this.rows = rows;
+    this.cols = cols;
   }
 
   // паттерн создания матрицы для игрового поля
@@ -23,11 +26,12 @@ class GameFild extends GameObject {
 
 // класс игровой плитки
 class GameTile extends GameObject {
-  constructor(number) {
-    super(height, width); 
+  //принимает число на плитке и её координату
+  constructor(number, coordinateX, coordinateY) {
+    super();
+    this.number = number;
+    this.coordinateX = coordinateX;
+    this.coordinateY = coordinateY;
   }
 
-  speak() {
-    console.log(`${this.name} лает.`);
-  }
 }
