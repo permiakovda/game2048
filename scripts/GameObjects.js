@@ -27,11 +27,13 @@ class GameFild extends GameObject {
 // класс игровой плитки
 class GameTile extends GameObject {
   //принимает число на плитке и её координату
-  constructor(number, coordinateX, coordinateY) {
+  constructor(number, coordinateX, coordinateY, size, ctx) {
     super();
-    this.number = number;
-    this.coordinateX = coordinateX;
-    this.coordinateY = coordinateY;
+    this.number = number;             //число на плитке
+    this.coordinateX = coordinateX;   //координата x
+    this.coordinateY = coordinateY;   //координата y
+    this.size = size;                 //размер квадратной плитки
+    this.ctx = ctx;                   //ссылка на 2д-контекст для рисования в canvas
   }
 
 }
