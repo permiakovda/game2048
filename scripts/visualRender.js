@@ -69,32 +69,20 @@ function gameFildRender (options = {}) {
 }
 
 /**
- * Визуализация игровой плитки
+ * Отрисовывает игровую плитку со скругленными углами на Canvas с поддержкой внутреннего отступа (padding).
+ * Функция сначала рисует внешнюю рамку/тень, а затем накладывает поверх неё основную плитку.
+ *
+ * @param {number} coordinateX - Координата X левого верхнего угла внешней границы плитки.
+ * @param {number} coordinateY - Координата Y левого верхнего угла внешней границы плитки.
+ * @param {number} size - Общая ширина и высота внешней квадратной плитки в пикселях.
+ * @param {CanvasRenderingContext2D} ctx - 2D контекст рендеринга элемента canvas.
+ * @param {string|number|null|undefined} number - Значение (число или строка), которое будет выведено по центру плитки. Если null или undefined — текст не выводится.
+ * @param {string} bgColor - CSS-цвет заливки основной части плитки (например, '#eee', 'rgb(240,240,240)' или 'lightblue').
+ * @param {number} radius - Радиус скругления углов в пикселях. Автоматически ограничивается половиной стороны во избежание артефактов.
+ * @param {number} [padding=0] - Внутренний отступ между внешней границей и основным фоном в пикселях. 
+ *                               Не может быть меньше 0 и больше половины размера плитки. По умолчанию равен 0 (отступ отсутствует).
  */
-// function gameTileRender (coordinateX, coordinateY, size, ctx, number, bgColor, radius) {
-//     // Защита от некорректных значений радиуса (например, если он больше половины стороны)
-//     const safeRadius = Math.min(radius, size / 2);
-
-//     ctx.beginPath();
-    
-//     ctx.moveTo(coordinateX + safeRadius, coordinateY); // Начинаем с верхней грани, отступив слева на радиус
-//     ctx.lineTo(coordinateX + size - safeRadius, coordinateY); // Верхняя грань до начала правого верхнего угла
-//     ctx.quadraticCurveTo(coordinateX + size, coordinateY, coordinateX + size, coordinateY + safeRadius); // Правый верхний угол
-//     ctx.lineTo(coordinateX + size, coordinateY + size - safeRadius); // Правая грань до начала нижнего правого угла
-//     ctx.quadraticCurveTo(coordinateX + size, coordinateY + size, coordinateX + size - safeRadius, coordinateY + size); // Нижний правый угол
-//     ctx.lineTo(coordinateX + safeRadius, coordinateY + size); // Нижняя грань до левого нижнего угла
-//     ctx.quadraticCurveTo(coordinateX, coordinateY + size, coordinateX, coordinateY + size - safeRadius); // Нижний левый угол
-//     ctx.lineTo(coordinateX, coordinateY + safeRadius); // Левая грань до верхнего левого угла
-//     ctx.quadraticCurveTo(coordinateX, coordinateY, coordinateX + safeRadius, coordinateY); // Замыкание контура (левый верхний угол)
-//     ctx.closePath();
-
-//     // Заливаем цветом
-//     ctx.fillStyle = bgColor;
-//     ctx.fill();
-
-// }
-
-function gameTileRender(coordinateX, coordinateY, size, ctx, number, bgColor, radius, padding = 0) {
+function gameTileRender(coordinateX, coordinateY, size, ctx, number = 2, bgColor, radius = 0, padding = 0) {
     // Ограничиваем отступ: он не может быть меньше 0 и больше половины размера минус 1px (для минимального внутреннего квадрата)
     const actualPadding = Math.max(0, Math.min(padding, (size - 1) / 2));
 
@@ -110,7 +98,6 @@ function gameTileRender(coordinateX, coordinateY, size, ctx, number, bgColor, ra
     const innerY = coordinateY + actualPadding;
 
     // 1. Рисуем внешнюю рамку (тень/границу)
-    // Если вам нужна просто плитка без визуального отступа, замените цвет на bgColor здесь и удалите второй блок fill()
     ctx.fillStyle = 'rgba(0, 0, 0, 0)'; 
     drawRoundedRect(ctx, coordinateX, coordinateY, size, safeRadiusFull);
     ctx.fill();
@@ -131,7 +118,7 @@ function gameTileRender(coordinateX, coordinateY, size, ctx, number, bgColor, ra
     }
 }
 
-// Вспомогательная функция рисования закругленного прямоугольника (DRY — чтобы не дублировать путь дважды)
+// Вспомогательная функция рисования закругленного прямоугольника
 function drawRoundedRect(ctx, x, y, side, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -145,6 +132,9 @@ function drawRoundedRect(ctx, x, y, side, r) {
     ctx.quadraticCurveTo(x, y, x + r, y);
     ctx.closePath();
 }
+
+
+
 
 export { gameFildRender, gameTileRender };
 
