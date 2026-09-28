@@ -34,12 +34,12 @@ export class GameField extends GameObject {
   }
 
   // Установка значения в конкретную ячейку
-  setCell(row, col, value) {
-    if (!this.isValidCoords(row, col)) {
+  setCell(tile) {
+    if (!this.isValidCoords(tile.coordinateY, tile.coordinateX)) {
       console.error(`Ошибка: координаты [${row}, ${col}] выходят за пределы поля.`);
       return false;
     }
-    this.matrix[row][col] = value;
+    this.matrix[tile.coordinateY][tile.coordinateX] = tile;
     return true;
   }
 
@@ -65,10 +65,10 @@ export class GameField extends GameObject {
     const emptyTiles = [];
 
     // 1. Проходим по всему массиву и собираем координаты пустых ячеек
-    for (let i = 0; i < this.matrix.Length; i++) {
-      for (let j = 0; j < this.matrix[i].Length; j++) {
-        if (this.matrix[i][j] === 0) {
-          emptyTiles.Push([i, j]);
+    for (let i = 0; i < this.matrix.length; i++) {
+      for (let j = 0; j < this.matrix[i].length; j++) {
+        if (this.matrix[i][j] == 0) {
+          emptyTiles.push([i, j]);
         }
       }
     }
@@ -79,37 +79,37 @@ export class GameField extends GameObject {
     }
 
     // 2. Выбираем случайную ячейку из списка
-    const randomIndex = Math.Floor(Math.Random() * emptyTiles.Length);
+    const randomIndex = Math.floor(Math.random() * emptyTiles.length);
     const [row, col] = emptyTiles[randomIndex];
 
     // 3. Заполняем её плиткой
-    this.matrix[row][col] = new GameTile(2, this.tileSize * row, this.tileSize * col, tileSize);
+    this.matrix[row][col] = new GameTile(2, this.tileSize * row, this.tileSize * col, this.tileSize);
   }
 }
 
 // класс игровой плитки
 export class GameTile extends GameObject {
   //принимает число на плитке и её координату
-  constructor(number, coordinateX, coordinateY, size) {
+  constructor(number, row, col, size) {
     super();
     this.number = number;             //число на плитке
-    this.coordinateX = coordinateX;   //координата x
-    this.coordinateY = coordinateY;   //координата y
+    this.coordinateX = col;   //координата x
+    this.coordinateY = row;   //координата y
     this.size = size;                 //размер квадратной плитки
   }
 
 }
 
 // класс игрового ядра
-class GameCore extends GameObject {
-  constructor() {
+export class GameCore extends GameObject {
+  constructor(rows, cols, tileSize) {
     super();
-    this.field = new GameField(4, 4); // Поле 4x4
+    this.field = new GameField(rows, cols, tileSize); // создание игрового поля
     this.score = 0;
     this.isWaitingInput = true; // Флаг состояния (готов к ходу игрока или крутит анимацию / обрабатывает)
 
     this._setupInput(); // Подписываемся на клавиши
-    this._startNewGame(); // Инициализация
+    // this._startNewGame(); // Инициализация
   }
 
   _setupInput() {
@@ -123,7 +123,7 @@ class GameCore extends GameObject {
     // Добавляем 2 случайных цифры для старта
     this.field.spawnRandomTile();
     this.field.spawnRandomTile();
-    this._render(); // Отрисовываем начальное состояние
+    // this._render(); // Отрисовываем начальное состояние
   }
 
   _onKeyPress(e) {
