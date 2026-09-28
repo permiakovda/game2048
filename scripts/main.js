@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     gameField.setCell(1, 2, new GameTile(2, 1, 2, 100));
 
+    // черновой вариант отрисовки нового состояния игры
     for (let i = 0; i < gameField.matrix.length; i++) { 
       for (let j = 0; j < gameField.matrix[i].length; j++) { 
         if (gameField.matrix[i][j] !== 0){
@@ -37,8 +38,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             context2d.ctx, 
             gameField.matrix[i][j].number, 
             twoTitleBG, 
-            titleRadius,
-            10)
+            titleRadius);
         }
     }
   }
