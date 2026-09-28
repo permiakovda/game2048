@@ -19,11 +19,13 @@ document.addEventListener("DOMContentLoaded", (event) => {
       parent: document.querySelector('.main'),
     });
 
-    // подготовка игрового поля
-    const gameField = new GameField(4, 4);
-
     // подготовка размеров одной плитки
     const tileSize = fieldWhidth / rows;
+
+    // подготовка игрового поля
+    const gameField = new GameField(4, 4, tileSize);
+
+    
 
     gameField.setCell(1, 2, new GameTile(2, 1, 2, 100));
 

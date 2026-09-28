@@ -11,13 +11,14 @@ class GameObject {
 
 // класс игрового поля
 export class GameField extends GameObject {
-  constructor(rows, cols) {
+  constructor(rows, cols, tileSize) {
     super();
     if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows <= 0 || cols <= 0) {
       throw new Error('Размеры поля должны быть положительными целыми числами.');
     }
     this.rows = rows;
     this.cols = cols;
+    this.tileSize = tileSize;
 
     this.matrix = this.createMatrix(rows, cols, 0);
   }
@@ -59,7 +60,31 @@ export class GameField extends GameObject {
     }
   }
 
+  // создание плитки в случайном месте
+  spawnRandomTile() {
+    const emptyTiles = [];
 
+    // 1. Проходим по всему массиву и собираем координаты пустых ячеек
+    for (let i = 0; i < this.matrix.Length; i++) {
+      for (let j = 0; j < this.matrix[i].Length; j++) {
+        if (this.matrix[i][j] === 0) {
+          emptyTiles.Push([i, j]);
+        }
+      }
+    }
+
+    // Если пустых ячеек нет выбрасываем ошибку
+    if (emptyTiles.Length === 0) {
+      throw new Error('Добовлять новый элемент некуда, возможно - это конец игры.');
+    }
+
+    // 2. Выбираем случайную ячейку из списка
+    const randomIndex = Math.Floor(Math.Random() * emptyTiles.Length);
+    const [row, col] = emptyTiles[randomIndex];
+
+    // 3. Заполняем её плиткой
+    this.matrix[row][col] = new GameTile(2, this.tileSize * row, this.tileSize * col, tileSize);
+  }
 }
 
 // класс игровой плитки
@@ -77,9 +102,8 @@ export class GameTile extends GameObject {
 
 // класс игрового ядра
 class GameCore extends GameObject {
-  constructor(containerElement) {
+  constructor() {
     super();
-    this.container = containerElement;
     this.field = new GameField(4, 4); // Поле 4x4
     this.score = 0;
     this.isWaitingInput = true; // Флаг состояния (готов к ходу игрока или крутит анимацию / обрабатывает)

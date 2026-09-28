@@ -10,7 +10,17 @@
     --colors-border: #9e9e9e;         /* цвет обводки */
     --colors-gameFildBG: #cfc0af;     /* цвет заднего фона игрового поля */
 
-    --colors-twoTitleBG: #eee4d9;     /* цвет плитки с 2 */
+    --colors-TitleBG_2: #eee4d9;     /* цвет плитки с 2 */
+    --colors-TitleBG_4: #ede0c7;     /* цвет плитки с 4 */
+    --colors-TitleBG_8: #f9b376;     /* цвет плитки с 8 */
+    --colors-TitleBG_16: #ff9b60;     /* цвет плитки с 16 */
+    --colors-TitleBG_32: #ca6a49;     /* цвет плитки с 32 */
+    --colors-TitleBG_64: #ec6233;     /* цвет плитки с 64 */
+    --colors-TitleBG_128: #e8c562;     /* цвет плитки с 128 */
+    --colors-TitleBG_256: #dfba55;     /* цвет плитки с 256 */
+    --colors-TitleBG_512: #f3c54b;     /* цвет плитки с 512 */
+    --colors-TitleBG_1024: #f2c138;     /* цвет плитки с 1024 */
+    --colors-TitleBG_2048: #f2bd28;     /* цвет плитки с 2048 */
 
     --border-radius: 10px;              /* радиус скргуления*/
 }
