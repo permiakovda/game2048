@@ -3,10 +3,9 @@ const titleRadius = getComputedStyle(document.documentElement).getPropertyValue(
 const twoTitleBG = getComputedStyle(document.documentElement).getPropertyValue('--colors-twoTitleBG');
 
 import { gameFildRender, gameTileRender } from "./visualRender.js";
+import { GameField, GameTile } from './GameObjects.js';
 
 document.addEventListener("DOMContentLoaded", (event) => {
-    console.log("DOM fully loaded and parsed");
-
     const context2d = gameFildRender({
       width: 400,      
       height: 400,     
@@ -14,6 +13,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
       parent: document.querySelector('.main'),
       retina: false
     });
+
+    const gameField = new GameField(4, 4);
+
+    gameField.setCell(1, 2, new GameTile(2, 1, 2, 100));
+
+    console.log(gameField.matrix);
 
     const tileSize = 100;
 
