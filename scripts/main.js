@@ -13,8 +13,8 @@ import { GameField, GameTile } from './GameObjects.js';
 document.addEventListener("DOMContentLoaded", (event) => {
     //отрисовка холста для игры
     const context2d = gameFildRender({
-      width: 400,      
-      height: 400,     
+      width: fieldWhidth,      
+      height: fieldHeight,     
       id: 'game-canvas',
       parent: document.querySelector('.main'),
     });
@@ -27,11 +27,24 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     gameField.setCell(1, 2, new GameTile(2, 1, 2, 100));
 
-    console.log(gameField.matrix);
-
+    for (let i = 0; i < gameField.matrix.length; i++) { 
+      for (let j = 0; j < gameField.matrix[i].length; j++) { 
+        if (gameField.matrix[i][j] !== 0){
+          gameTileRender(
+            gameField.matrix[i][j].coordinateX * tileSize, 
+            gameField.matrix[i][j].coordinateY * tileSize, 
+            tileSize, 
+            context2d.ctx, 
+            gameField.matrix[i][j].number, 
+            twoTitleBG, 
+            titleRadius,
+            10)
+        }
+    }
+  }
     
 
-    gameTileRender(0, 0, tileSize, context2d.ctx, 2, twoTitleBG, titleRadius, 10)
+    
 
 
 
