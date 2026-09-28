@@ -58,17 +58,6 @@ export class GameField extends GameObject {
       }
     }
   }
-
-  //отрисовка игрового поля
-  render(renderer) {
-    if (typeof renderer !== 'function') return;
-
-    for (let r = 0; r < this.rows; r++) {
-      // Можно передавать целую строку для пакетной отрисовки
-      const rowData = this.matrix[r];
-      renderer(rowData, r);
-    }
-  }
 }
 
 // класс игровой плитки

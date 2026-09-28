@@ -1,6 +1,13 @@
-// импорт цветов из файла config.css
+// импорт настроичных данных из файла config.css
 const titleRadius = getComputedStyle(document.documentElement).getPropertyValue('--border-radius').replace("px", "");
 const twoTitleBG = getComputedStyle(document.documentElement).getPropertyValue('--colors-twoTitleBG');
+const fieldWhidth = getComputedStyle(document.documentElement).getPropertyValue('--game-fieldWhidth');        
+const fieldHeight = getComputedStyle(document.documentElement).getPropertyValue('--game-fieldHeight');         
+const rows = getComputedStyle(document.documentElement).getPropertyValue('--game-rows');                     
+const cols = getComputedStyle(document.documentElement).getPropertyValue('--game-cols');  
+
+
+
 
 import { gameFildRender, gameTileRender } from "./visualRender.js";
 import { GameField, GameTile } from './GameObjects.js';

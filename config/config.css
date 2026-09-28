@@ -1,10 +1,16 @@
-/* основные цвета и размеры в игре */
+/* настроичная информация для всей игры */
 
 :root {
-    --colors-border: #9e9e9e;
-    --colors-gameFildBG: #cfc0af;
+    --game-fieldWhidth: 400;            /* ширина игрового поля в px */
+    --game-fieldHeight: 400;            /* высота игрового поля в px */
+    --game-rows: 4;                     /* количество строк на игровом поле */
+    --game-cols: 4;                     /* количество столбцов на игровом поле */
 
-    --colors-twoTitleBG: #eee4d9;
 
-    --border-radius: 10px;
+    --colors-border: #9e9e9e;         /* цвет обводки */
+    --colors-gameFildBG: #cfc0af;     /* цвет заднего фона игрового поля */
+
+    --colors-twoTitleBG: #eee4d9;     /* цвет плитки с 2 */
+
+    --border-radius: 10px;              /* радиус скргуления*/
 }

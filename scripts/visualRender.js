@@ -8,7 +8,6 @@
  * @param {number} [options.height=600] - Высота холста в пикселях.
  * @param {string} [options.id='game-canvas'] - ID элемента (нужен для стилей CSS).
  * @param {HTMLElement|string} [options.parent=document.body] - Родительский узел или его селектор.
- * @param {boolean} [options.retina=false] - Включить поддержку Retina-экранов (умножает размер на devicePixelRatio).
  * @returns {{ canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D }} Объект с холстом и 2D-контекстом.
  */
 function gameFildRender (options = {}) {
