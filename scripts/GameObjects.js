@@ -1,4 +1,5 @@
 // общий класс для всех игровых сущностей
+
 class GameObject {
   constructor() {
     this.isAlive = true;
@@ -11,14 +12,13 @@ class GameObject {
 
 // класс игрового поля
 export class GameField extends GameObject {
-  constructor(rows, cols, tileSize) {
+  constructor(rows, cols) {
     super();
     if (!Number.isInteger(rows) || !Number.isInteger(cols) || rows <= 0 || cols <= 0) {
       throw new Error('Размеры поля должны быть положительными целыми числами.');
     }
     this.rows = rows;
     this.cols = cols;
-    this.tileSize = tileSize;
 
     this.matrix = this.createMatrix(rows, cols, 0);
   }
@@ -83,28 +83,24 @@ export class GameField extends GameObject {
     const [row, col] = emptyTiles[randomIndex];
 
     // 3. Заполняем её плиткой
-    this.matrix[row][col] = new GameTile(2, row, col, this.tileSize);
-  }
-}
-
-// класс игровой плитки
-export class GameTile extends GameObject {
-  //принимает число на плитке и её координату
-  constructor(number, row, col, size) {
-    super();
-    this.number = number;             //число на плитке
-    this.coordinateX = col;           //координата x
-    this.coordinateY = row;           //координата y
-    this.size = size;                 //размер квадратной плитки
+    this.matrix[row][col] = this._getTileNumber();
   }
 
+  _getTileNumber() {
+    if (Math.random() < 0.9) {
+      return 2;
+    } else {
+      return 4;
+    }
+  }
 }
 
 // класс игрового ядра
 export class GameCore extends GameObject {
   constructor(rows, cols, tileSize, ctx, tileRenderFunction) {
     super();
-    this.field = new GameField(rows, cols, tileSize);   // создание игрового поля
+    this.tileSize = tileSize;                           // размер плитки
+    this.field = new GameField(rows, cols);             // создание игрового поля
     this.ctx = ctx;                                     // ссылка на канвас
     this.tileRenderFunction = tileRenderFunction;       // Сохраняем функцию рисования
     this.score = 0;                                     // очкиы
@@ -181,13 +177,13 @@ export class GameCore extends GameObject {
         if (this.field.matrix[i][j] !== 0) {
 
           this.tileRenderFunction(
-            this.field.matrix[i][j].coordinateX * this.field.tileSize,
-            this.field.matrix[i][j].coordinateY * this.field.tileSize,
-            this.field.tileSize,
+            i * this.tileSize,
+            j * this.tileSize,
+            this.tileSize,
             this.ctx,
-            this.field.matrix[i][j].number,
-            
-            );
+            this.field.matrix[i][j],
+
+          );
         }
       }
     }

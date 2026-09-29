@@ -8,7 +8,7 @@ const cols = Number(getComputedStyle(document.documentElement).getPropertyValue(
 
 // импорт модулей игры
 import { gameFildRender, gameTileRender } from "./visualRender.js";
-import { GameField, GameTile, GameCore } from './GameObjects.js';
+import { GameField, GameCore } from './GameObjects.js';
 
 document.addEventListener("DOMContentLoaded", (event) => {
   //отрисовка холста для игры
