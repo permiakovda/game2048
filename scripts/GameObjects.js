@@ -102,14 +102,16 @@ export class GameTile extends GameObject {
 
 // класс игрового ядра
 export class GameCore extends GameObject {
-  constructor(rows, cols, tileSize) {
+  constructor(rows, cols, tileSize, ctx, tileRenderFunction) {
     super();
-    this.field = new GameField(rows, cols, tileSize); // создание игрового поля
-    this.score = 0;
-    this.isWaitingInput = true; // Флаг состояния (готов к ходу игрока или крутит анимацию / обрабатывает)
+    this.field = new GameField(rows, cols, tileSize);   // создание игрового поля
+    this.ctx = ctx;                                     // ссылка на канвас
+    this.tileRenderFunction = tileRenderFunction;       // Сохраняем функцию рисования
+    this.score = 0;                                     // очкиы
+    this.isWaitingInput = true;                         // Флаг состояния (готов к ходу игрока или крутит анимацию / обрабатывает)
 
-    this._setupInput(); // Подписываемся на клавиши
-    // this._startNewGame(); // Инициализация
+    this._setupInput();                                 // Подписываемся на клавиши
+    this._startNewGame();                               // Инициализация
   }
 
   _setupInput() {
@@ -123,7 +125,7 @@ export class GameCore extends GameObject {
     // Добавляем 2 случайных цифры для старта
     this.field.spawnRandomTile();
     this.field.spawnRandomTile();
-    // this._render(); // Отрисовываем начальное состояние
+    this._render(); // Отрисовываем начальное состояние
   }
 
   _onKeyPress(e) {
@@ -171,10 +173,24 @@ export class GameCore extends GameObject {
   }
 
   _render() {
-    // Здесь вы просите ваш класс Field или отдельный View отрисовать себя
-    // Например: this.fieldView.draw(this.field.matrix, this.score);
-    console.log('Текущий счет:', this.score);
-    console.table(this.field.matrix);
+    console.log(this.field.matrix)
+
+    // черновой вариант отрисовки нового состояния игры
+    for (let i = 0; i < this.field.matrix.length; i++) {
+      for (let j = 0; j < this.field.matrix[i].length; j++) {
+        if (this.field.matrix[i][j] !== 0) {
+
+          this.tileRenderFunction(
+            this.field.matrix[i][j].coordinateX,
+            this.field.matrix[i][j].coordinateY,
+            this.field.tileSize,
+            this.ctx,
+            this.field.matrix[i][j].number,
+            10,
+            10);
+        }
+      }
+    }
   }
 }
 

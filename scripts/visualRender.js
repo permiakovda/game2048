@@ -11,6 +11,9 @@ const TitleBG_512 = getComputedStyle(document.documentElement).getPropertyValue(
 const TitleBG_1024 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_1024');
 const TitleBG_2048 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_2048');
 
+const borderRadius = getComputedStyle(document.documentElement).getPropertyValue('--border-radius');
+const paddingTitle = getComputedStyle(document.documentElement).getPropertyValue('--padding-title');
+
 // модуль визуализации и рендера игрового поял и игровых плиток
 
 /**
