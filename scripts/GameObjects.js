@@ -186,8 +186,8 @@ export class GameCore extends GameObject {
             this.field.tileSize,
             this.ctx,
             this.field.matrix[i][j].number,
-            10,
-            10);
+            
+            );
         }
       }
     }

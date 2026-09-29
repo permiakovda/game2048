@@ -1,34 +1,50 @@
-// импорт цветов из файла config.css
-const TitleBG_2 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_2');
-const TitleBG_4 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_4');
-const TitleBG_8 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_8');
-const TitleBG_16 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_16');
-const TitleBG_32 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_32');
-const TitleBG_64 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_64');
-const TitleBG_128 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_128');
-const TitleBG_256 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_256');
-const TitleBG_512 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_512');
-const TitleBG_1024 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_1024');
-const TitleBG_2048 = getComputedStyle(document.documentElement).getPropertyValue('--colors-TitleBG_2048');
-
-const borderRadius = getComputedStyle(document.documentElement).getPropertyValue('--border-radius');
-const paddingTitle = getComputedStyle(document.documentElement).getPropertyValue('--padding-title');
-
-const TILE_COLORS = {
-    2:    TitleBG_2,
-    4:    TitleBG_4,
-    8:    TitleBG_8,
-    16:   TitleBG_16,
-    32:   TitleBG_32,
-    64:   TitleBG_64,
-    128:  TitleBG_128,
-    256:  TitleBG_256,
-    512:  TitleBG_512,
-    1024: TitleBG_1024,
-    2048: TitleBG_2048,
-};
-
 // модуль визуализации и рендера игрового поял и игровых плиток
+
+// импорт настроек из файла config.css
+const borderRadius = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--border-radius')) || 0;
+const paddingTitle = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--padding-title')) || 0;
+
+let TILE_COLORS = null;
+
+// подгрузка активных css правли
+function loadTileColors() {
+    const cs = getComputedStyle(document.documentElement);
+    const get = (name) => cs.getPropertyValue(name).trim();
+    TILE_COLORS = {
+        2: get('--colors-TitleBG_2'),
+        4: get('--colors-TitleBG_4'),
+        8: get('--colors-TitleBG_8'),
+        16: get('--colors-TitleBG_16'),
+        32: get('--colors-TitleBG_32'),
+        64: get('--colors-TitleBG_64'),
+        128: get('--colors-TitleBG_128'),
+        256: get('--colors-TitleBG_256'),
+        512: get('--colors-TitleBG_512'),
+        1024: get('--colors-TitleBG_1024'),
+        2048: get('--colors-TitleBG_2048'),
+    };
+}
+
+// выбора цвета заднего фона плитки
+function tileColorSetBG(number) {
+    if (!TILE_COLORS) loadTileColors();
+    return TILE_COLORS[number] ?? TILE_COLORS[2048];
+}
+
+// рисование закругленного прямоугольника
+function drawRoundedRect(ctx, x, y, side, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + side - r, y);
+    ctx.quadraticCurveTo(x + side, y, x + side, y + r);
+    ctx.lineTo(x + side, y + side - r);
+    ctx.quadraticCurveTo(x + side, y + side, x + side - r, y + side);
+    ctx.lineTo(x + r, y + side);
+    ctx.quadraticCurveTo(x, y + side, x, y + side - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+}
 
 /**
  * Создает HTML-элемент <canvas> и добавляет его в DOM.
@@ -87,7 +103,7 @@ function gameFildRender(options = {}) {
  * @param {number} [padding=0] - Внутренний отступ между внешней границей и основным фоном в пикселях. 
  *                               Не может быть меньше 0 и больше половины размера плитки. По умолчанию равен 0 (отступ отсутствует).
  */
-function gameTileRender(coordinateX, coordinateY, size, ctx, number = 2, radius = 0, padding = 0) {
+function gameTileRender(coordinateX, coordinateY, size, ctx, number = 2, radius = borderRadius, padding = paddingTitle) {
     // Ограничиваем отступ: он не может быть меньше 0 и больше половины размера минус 1px (для минимального внутреннего квадрата)
     const actualPadding = Math.max(0, Math.min(padding, (size - 1) / 2));
 
@@ -123,24 +139,8 @@ function gameTileRender(coordinateX, coordinateY, size, ctx, number = 2, radius 
     }
 }
 
-// Вспомогательная функция рисования закругленного прямоугольника
-function drawRoundedRect(ctx, x, y, side, r) {
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + side - r, y);
-    ctx.quadraticCurveTo(x + side, y, x + side, y + r);
-    ctx.lineTo(x + side, y + side - r);
-    ctx.quadraticCurveTo(x + side, y + side, x + side - r, y + side);
-    ctx.lineTo(x + r, y + side);
-    ctx.quadraticCurveTo(x, y + side, x, y + side - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
-    ctx.closePath();
-}
 
-// Вспомогательная функция выбора цвета заднего фона плитки
-function tileColorSetBG(number) {
-    return TILE_COLORS[number] ?? TILE_COLORS[2048];
-}
+
+
 
 export { gameFildRender, gameTileRender };
