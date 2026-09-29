@@ -34,12 +34,12 @@ export class GameField extends GameObject {
   }
 
   // Установка значения в конкретную ячейку
-  setCell(tile) {
-    if (!this.isValidCoords(tile.coordinateY, tile.coordinateX)) {
-      console.error(`Ошибка: координаты [${tile.coordinateY}, ${tile.coordinateX}] выходят за пределы поля.`);
+  setCell(row, col, number) {
+    if (!this.isValidCoords(row, col)) {
+      console.error(`Ошибка: координаты [${row}, ${col}] выходят за пределы поля.`);
       return false;
     }
-    this.matrix[tile.coordinateY][tile.coordinateX] = tile;
+    this.matrix[row][col] = number;
     return true;
   }
 
@@ -75,7 +75,7 @@ export class GameField extends GameObject {
 
     // Если пустых ячеек нет выбрасываем ошибку
     if (emptyTiles.length === 0) {
-      throw new Error('Добовлять новый элемент некуда, возможно - это конец игры.');
+      return null;
     }
 
     // 2. Выбираем случайную ячейку из списка
@@ -97,12 +97,13 @@ export class GameField extends GameObject {
 
 // класс игрового ядра
 export class GameCore extends GameObject {
-  constructor(rows, cols, tileSize, ctx, tileRenderFunction) {
-    super();
-    this.tileSize = tileSize;                           // размер плитки
+  constructor(rows, cols, canvas, tileRenderFunction, fieldClearFunction) {
+    super();                         // размер плитки
     this.field = new GameField(rows, cols);             // создание игрового поля
-    this.ctx = ctx;                                     // ссылка на канвас
-    this.tileRenderFunction = tileRenderFunction;       // Сохраняем функцию рисования
+    this.canvas = canvas;                               // ссылка на канвас
+    this.ctx = this.canvas.getContext('2d');            // ссылка на контекст для рисования
+    this.tileRenderFunction = tileRenderFunction;       // функция рисования
+    this.fieldClearFunction = fieldClearFunction;       // функция чистки канваса
     this.score = 0;                                     // очкиы
     this.isWaitingInput = true;                         // Флаг состояния (готов к ходу игрока или крутит анимацию / обрабатывает)
 
@@ -124,65 +125,64 @@ export class GameCore extends GameObject {
     this._render(); // Отрисовываем начальное состояние
   }
 
-  _onKeyPress(e) {
-    // 1. Проверка: свободна ли игра и нажата ли стрелка
-    if (!this.isWaitingInput || !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-      return;
-    }
+  // _onKeyPress(e) {
+  //   // 1. Проверка: свободна ли игра и нажата ли стрелка
+  //   if (!this.isWaitingInput || !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+  //     return;
+  //   }
 
-    e.preventDefault(); // Блокируем прокрутку страницы
+  //   e.preventDefault(); // Блокируем прокрутку страницы
 
-    // 2. Блокируем ввод на время хода
-    this.isWaitingInput = false;
+  //   // 2. Блокируем ввод на время хода
+  //   this.isWaitingInput = false;
 
-    // 3. Сохраняем состояние ДО хода для проверки изменений
-    const previousState = this.field.getMatrixCopy();
+  //   // 3. Сохраняем состояние ДО хода для проверки изменений
+  //   const previousState = this.field.getMatrixCopy();
 
-    // 4. Выполняем логику сдвига в классе GameField
-    const moveResult = this.field.move(e.key);
+  //   // 4. Выполняем логику сдвига в классе GameField
+  //   const moveResult = this.field.move(e.key);
 
-    if (moveResult.moved) {
-      // 5. Если поле изменилось: обновляем счет
-      this.score += moveResult.scoreGained;
+  //   if (moveResult.moved) {
+  //     // 5. Если поле изменилось: обновляем счет
+  //     this.score += moveResult.scoreGained;
 
-      // 6. Добавляем новый тайл (это делает поле, но триггерит Game)
-      this.field.spawnRandomTile();
+  //     // 6. Добавляем новый тайл (это делает поле, но триггерит Game)
+  //     this.field.spawnRandomTile();
 
-      // 7. Проверка условий завершения
-      if (this._checkGameOver()) {
-        console.log('Игра окончена!');
-        return;
-      }
-    }
+  //     // 7. Проверка условий завершения
+  //     if (this._checkGameOver()) {
+  //       console.log('Игра окончена!');
+  //       return;
+  //     }
+  //   }
 
-    // 8. Разрешаем новый ход. 
-    // В реальной игре здесь должна быть задержка на анимацию (setTimeout)
-    this.isWaitingInput = true;
+  //   // 8. Разрешаем новый ход. 
+  //   // В реальной игре здесь должна быть задержка на анимацию (setTimeout)
+  //   this.isWaitingInput = true;
 
-    // 9. Перерисовка UI
-    this._render();
-  }
+  //   // 9. Перерисовка UI
+  //   this._render();
+  // }
 
-  _checkGameOver() {
-    // Проверка на 2048 (победа) или отсутствие возможных ходов
-    return this.field.hasTile(2048) || !this.field.hasAvailableMoves();
-  }
+  // _checkGameOver() {
+  //   // Проверка на 2048 (победа) или отсутствие возможных ходов
+  //   return this.field.hasTile(2048) || !this.field.hasAvailableMoves();
+  // }
 
   _render() {
+    this.fieldClearFunction(this.canvas);
+
     console.log(this.field.matrix)
 
-    // черновой вариант отрисовки нового состояния игры
     for (let i = 0; i < this.field.matrix.length; i++) {
       for (let j = 0; j < this.field.matrix[i].length; j++) {
         if (this.field.matrix[i][j] !== 0) {
 
           this.tileRenderFunction(
-            i * this.tileSize,
-            j * this.tileSize,
-            this.tileSize,
+            i,
+            j,
             this.ctx,
             this.field.matrix[i][j],
-
           );
         }
       }
