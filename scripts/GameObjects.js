@@ -36,7 +36,7 @@ export class GameField extends GameObject {
   // Установка значения в конкретную ячейку
   setCell(tile) {
     if (!this.isValidCoords(tile.coordinateY, tile.coordinateX)) {
-      console.error(`Ошибка: координаты [${row}, ${col}] выходят за пределы поля.`);
+      console.error(`Ошибка: координаты [${tile.coordinateY}, ${tile.coordinateX}] выходят за пределы поля.`);
       return false;
     }
     this.matrix[tile.coordinateY][tile.coordinateX] = tile;
@@ -74,7 +74,7 @@ export class GameField extends GameObject {
     }
 
     // Если пустых ячеек нет выбрасываем ошибку
-    if (emptyTiles.Length === 0) {
+    if (emptyTiles.length === 0) {
       throw new Error('Добовлять новый элемент некуда, возможно - это конец игры.');
     }
 
@@ -83,7 +83,7 @@ export class GameField extends GameObject {
     const [row, col] = emptyTiles[randomIndex];
 
     // 3. Заполняем её плиткой
-    this.matrix[row][col] = new GameTile(2, this.tileSize * row, this.tileSize * col, this.tileSize);
+    this.matrix[row][col] = new GameTile(2, row, col, this.tileSize);
   }
 }
 
@@ -93,8 +93,8 @@ export class GameTile extends GameObject {
   constructor(number, row, col, size) {
     super();
     this.number = number;             //число на плитке
-    this.coordinateX = col;   //координата x
-    this.coordinateY = row;   //координата y
+    this.coordinateX = col;           //координата x
+    this.coordinateY = row;           //координата y
     this.size = size;                 //размер квадратной плитки
   }
 
@@ -181,8 +181,8 @@ export class GameCore extends GameObject {
         if (this.field.matrix[i][j] !== 0) {
 
           this.tileRenderFunction(
-            this.field.matrix[i][j].coordinateX,
-            this.field.matrix[i][j].coordinateY,
+            this.field.matrix[i][j].coordinateX * this.field.tileSize,
+            this.field.matrix[i][j].coordinateY * this.field.tileSize,
             this.field.tileSize,
             this.ctx,
             this.field.matrix[i][j].number,
