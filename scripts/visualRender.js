@@ -14,6 +14,20 @@ const TitleBG_2048 = getComputedStyle(document.documentElement).getPropertyValue
 const borderRadius = getComputedStyle(document.documentElement).getPropertyValue('--border-radius');
 const paddingTitle = getComputedStyle(document.documentElement).getPropertyValue('--padding-title');
 
+const TILE_COLORS = {
+    2:    TitleBG_2,
+    4:    TitleBG_4,
+    8:    TitleBG_8,
+    16:   TitleBG_16,
+    32:   TitleBG_32,
+    64:   TitleBG_64,
+    128:  TitleBG_128,
+    256:  TitleBG_256,
+    512:  TitleBG_512,
+    1024: TitleBG_1024,
+    2048: TitleBG_2048,
+};
+
 // модуль визуализации и рендера игрового поял и игровых плиток
 
 /**
@@ -24,7 +38,6 @@ const paddingTitle = getComputedStyle(document.documentElement).getPropertyValue
  * @param {number} [options.height=600] - Высота холста в пикселях.
  * @param {string} [options.id='game-canvas'] - ID элемента (нужен для стилей CSS).
  * @param {HTMLElement|string} [options.parent=document.body] - Родительский узел или его селектор.
- * @param {boolean} [options.retina=false] - Включить поддержку Retina-экранов (умножает размер на devicePixelRatio).
  * @returns {{ canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D }} Объект с холстом и 2D-контекстом.
  */
 function gameFildRender(options = {}) {
@@ -127,32 +140,7 @@ function drawRoundedRect(ctx, x, y, side, r) {
 
 // Вспомогательная функция выбора цвета заднего фона плитки
 function tileColorSetBG(number) {
-    if (number === 2) {
-        return TitleBG_2;
-    } else if (number === 4) {
-        return TitleBG_4
-    } else if (number === 8) {
-        return TitleBG_8
-    } else if (number === 16) {
-        return TitleBG_16
-    } else if (number === 32) {
-        return TitleBG_32
-    } else if (number === 64) {
-        return TitleBG_64
-    } else if (number === 128) {
-        return TitleBG_128
-    } else if (number === 256) {
-        return TitleBG_256
-    } else if (number === 512) {
-        return TitleBG_512
-    } else if (number === 1024) {
-        return TitleBG_1024
-    } else if (number === 2048) {
-        return TitleBG_2048
-    }else{
-        throw new Error('неизвесная цифра.');
-    }
-
+    return TILE_COLORS[number] ?? TILE_COLORS[2048];
 }
 
 export { gameFildRender, gameTileRender };
