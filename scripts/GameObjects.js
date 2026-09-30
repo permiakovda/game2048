@@ -52,7 +52,7 @@ export class GameField extends GameObject {
   }
 
   // Получить копию матрицы (полная копия без ссылок на исходные данные)
-  getMatrixCopy(){
+  getMatrixCopy() {
     return JSON.parse(JSON.stringify(this.matrix))
   }
 
@@ -99,9 +99,26 @@ export class GameField extends GameObject {
     }
   }
 
-  move(key){
-    if (key === 'ArrowRight'){
+  move(key) {
+    if (key === 'ArrowRight') {
       console.log('смещение враво!');
+
+      for (let i = 0; i < this.matrix.length; i++) {
+        for (let j = this.matrix[i].length; j >= 0; j--) {
+          for (let n = j; n < this.matrix[i].length; n++) {
+            if (this.matrix[i][n + 1] === 0 && this.matrix[i][n] !== 0) {
+              this.matrix[i][n + 1] = this.matrix[i][n];
+              this.matrix[i][n] = 0;
+            }
+
+            if (this.matrix[i][n + 1] === this.matrix[i][n]) {
+              this.matrix[i][n + 1] *= 2;
+              this.matrix[i][n] = 0;
+            }
+
+          }
+        }
+      }
     }
 
     return false;
