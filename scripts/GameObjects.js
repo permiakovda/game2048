@@ -100,23 +100,33 @@ export class GameField extends GameObject {
   }
 
   move(key) {
+    const moved = false;
+    const scoreGained = 0;
+
     if (key === 'ArrowRight') {
       // уборка нулей в сторону движения
       let shiftedGameMatrix = this.getMatrixCopy();
 
-      for (let i = 0; i < shiftedGameMatrix.length; i++) {
+      this.matrix
+
+      for (let i = 0; i < this.matrix.length; i++) {
         let row = []
-        row = shiftedGameMatrix[i].join('').replace(/0/g, '').padStart(shiftedGameMatrix.length, '0').split('').map(Number);
+        row = this.matrix[i].join('').replace(/0/g, '').padStart(this.matrix.length, '0').split('').map(Number);
+        this.matrix[i] = row
 
+        for (let j = 0; j < this.matrix[i].length; j++) {
+          if (this.matrix[i][j] === this.matrix[i][j - 1]) {
+            this.matrix[i][j] *= 2;
+            this.matrix[i][j - 1] = 0;
+          }
+        }
 
-        shiftedGameMatrix[i] = row
+        row = this.matrix[i].join('').replace(/0/g, '').padStart(this.matrix.length, '0').split('').map(Number);
+        this.matrix[i] = row
       }
-console.log(shiftedGameMatrix)
     }
 
-    
-
-    return false;
+    return {moved, scoreGained};
   }
 }
 
