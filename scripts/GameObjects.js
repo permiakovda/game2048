@@ -101,25 +101,20 @@ export class GameField extends GameObject {
 
   move(key) {
     if (key === 'ArrowRight') {
-      console.log('смещение враво!');
+      // уборка нулей в сторону движения
+      let shiftedGameMatrix = this.getMatrixCopy();
 
-      for (let i = 0; i < this.matrix.length; i++) {
-        for (let j = this.matrix[i].length; j >= 0; j--) {
-          for (let n = j; n < this.matrix[i].length; n++) {
-            if (this.matrix[i][n + 1] === 0 && this.matrix[i][n] !== 0) {
-              this.matrix[i][n + 1] = this.matrix[i][n];
-              this.matrix[i][n] = 0;
-            }
+      for (let i = 0; i < shiftedGameMatrix.length; i++) {
+        let row = []
+        row = shiftedGameMatrix[i].join('').replace(/0/g, '').padStart(shiftedGameMatrix.length, '0').split('').map(Number);
 
-            if (this.matrix[i][n + 1] === this.matrix[i][n]) {
-              this.matrix[i][n + 1] *= 2;
-              this.matrix[i][n] = 0;
-            }
 
-          }
-        }
+        shiftedGameMatrix[i] = row
       }
+console.log(shiftedGameMatrix)
     }
+
+    
 
     return false;
   }
