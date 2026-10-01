@@ -100,33 +100,86 @@ export class GameField extends GameObject {
   }
 
   move(key) {
-    const moved = false;
-    const scoreGained = 0;
+    const matrixBeforeMove = this.getMatrixCopy();
+    let result = { moved: false, scoreGained: 0 };
 
     if (key === 'ArrowRight') {
-      // уборка нулей в сторону движения
-      let shiftedGameMatrix = this.getMatrixCopy();
-
-      this.matrix
-
-      for (let i = 0; i < this.matrix.length; i++) {
-        let row = []
-        row = this.matrix[i].join('').replace(/0/g, '').padStart(this.matrix.length, '0').split('').map(Number);
-        this.matrix[i] = row
-
-        for (let j = 0; j < this.matrix[i].length; j++) {
-          if (this.matrix[i][j] === this.matrix[i][j - 1]) {
-            this.matrix[i][j] *= 2;
-            this.matrix[i][j - 1] = 0;
-          }
-        }
-
-        row = this.matrix[i].join('').replace(/0/g, '').padStart(this.matrix.length, '0').split('').map(Number);
-        this.matrix[i] = row
-      }
+      result = this._slideMatrixRight(this.matrix);
+      this.matrix = result.shiftedMatrix;
+    }else if (key === 'ArrowDown') {
+      result = this._slideMatrixRight(this._rotateMatrix(this.matrix, 'ccw'));
+      this.matrix = this._rotateMatrix(result.shiftedMatrix, 'cw');
+    }else if (key === 'ArrowLeft') {
+      result = this._slideMatrixRight(this._rotateMatrix(this._rotateMatrix(this.matrix, 'ccw'), 'ccw'));
+      this.matrix = this._rotateMatrix(this._rotateMatrix(result.shiftedMatrix, 'cw'), 'cw');
+    }else if (key === 'ArrowUp') {
+      result = this._slideMatrixRight(this._rotateMatrix(this.matrix, 'cw'));
+      this.matrix = this._rotateMatrix(result.shiftedMatrix, 'ccw');
     }
 
-    return {moved, scoreGained};
+    // паттерн для сравнения матриц
+    // moved = !(JSON.stringify(shiftedMatrix) === JSON.stringify(matrixBeforeMove));
+
+    
+
+    return { moved: result.moved };
+  }
+
+  // внутренний метод смещения и слияния игровой матрицы вправо
+  _slideMatrixRight(matrix) {
+    const shiftedMatrix = [];
+    let scoreGained = 0;
+
+    for (let i = 0; i < matrix.length; i++) {
+      const size = matrix[i].length;
+      const compact = matrix[i].filter(v => v !== 0);  // удаление нулей из строки игровой матрицы
+      const merged = [];
+
+      // идём СПРАВА налево, чтобы сливать крайние правые пары
+      for (let j = compact.length - 1; j >= 0; j--) {
+        if (j > 0 && compact[j] === compact[j - 1]) {
+          const newNumber = compact[j] * 2;
+          merged.unshift(newNumber);
+          scoreGained += newNumber;
+          j--;  // пропускаем уже слитую пару
+        } else {
+          merged.unshift(compact[j]);
+        }
+      }
+      while (merged.length < size) merged.unshift(0);  // добавить нули для слитой строки слева
+
+      shiftedMatrix[i] = merged;
+    }
+
+    return { shiftedMatrix, scoreGained };
+  }
+
+  // паттерн поворот игровой матрицы почасовой и против часовой стрелки
+  // rotate(matrix, 'cw')  — по часовой
+  // rotate(matrix, 'ccw') — против часовой
+  _rotateMatrix(matrix, direction = 'cw') {
+    if (!matrix.length) return [];
+
+    const rows = matrix.length;
+    const cols = matrix[0].length;
+
+    const result = Array.from({ length: cols }, () => Array(rows));
+
+    // Преобразуем строковый аргумент в числовой множитель
+    const k = direction === 'ccw' ? -1 : 1;
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        if (k === 1) {
+          // По часовой стрелке: [i][j] -> [j][rows - 1 - i]
+          result[j][rows - 1 - i] = matrix[i][j];
+        } else {
+          // Против часовой стрелки: [i][j] -> [cols - 1 - j][i]
+          result[cols - 1 - j][i] = matrix[i][j];
+        }
+      }
+    }
+    return result;
   }
 }
 
@@ -206,8 +259,6 @@ export class GameCore extends GameObject {
 
   _render() {
     this.fieldClearFunction(this.canvas);
-
-    console.log(this.field.matrix)
 
     for (let i = 0; i < this.field.matrix.length; i++) {
       for (let j = 0; j < this.field.matrix[i].length; j++) {
