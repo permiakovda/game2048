@@ -118,11 +118,9 @@ export class GameField extends GameObject {
     }
 
     // паттерн для сравнения матриц
-    // moved = !(JSON.stringify(shiftedMatrix) === JSON.stringify(matrixBeforeMove));
+    const moved = !(JSON.stringify(this.matrix) === JSON.stringify(matrixBeforeMove));
 
-    
-
-    return { moved: result.moved };
+    return { moved: moved, scoreGained: result.scoreGained };
   }
 
   // внутренний метод смещения и слияния игровой матрицы вправо
@@ -230,19 +228,19 @@ export class GameCore extends GameObject {
     // 4. Выполняем логику сдвига в классе GameField
     const moveResult = this.field.move(e.key);
 
-    if (moveResult.moved) {
-      // 5. Если поле изменилось: обновляем счет
-      this.score += moveResult.scoreGained;
+    // if (moveResult.moved) {
+    //   // 5. Если поле изменилось: обновляем счет
+    //   this.score += moveResult.scoreGained;
 
-      // 6. Добавляем новый тайл (это делает поле, но триггерит Game)
-      this.field.spawnRandomTile();
+    //   // 6. Добавляем новый тайл (это делает поле, но триггерит Game)
+    //   this.field.spawnRandomTile();
 
-      // 7. Проверка условий завершения
-      if (this._checkGameOver()) {
-        console.log('Игра окончена!');
-        return;
-      }
-    }
+    //   // 7. Проверка условий завершения
+    //   if (this._checkGameOver()) {
+    //     console.log('Игра окончена!');
+    //     return;
+    //   }
+    // }
 
     // 8. Разрешаем новый ход. 
     // В реальной игре здесь должна быть задержка на анимацию (setTimeout)
