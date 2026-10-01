@@ -120,6 +120,8 @@ export class GameField extends GameObject {
     // паттерн для сравнения матриц
     const moved = !(JSON.stringify(this.matrix) === JSON.stringify(matrixBeforeMove));
 
+    this.spawnRandomTile();
+
     return { moved: moved, scoreGained: result.scoreGained };
   }
 
@@ -221,9 +223,6 @@ export class GameCore extends GameObject {
 
     // 2. Блокируем ввод на время хода
     this.isWaitingInput = false;
-
-    // 3. Сохраняем состояние ДО хода для проверки изменений
-    const previousState = this.field.getMatrixCopy();
 
     // 4. Выполняем логику сдвига в классе GameField
     const moveResult = this.field.move(e.key);
