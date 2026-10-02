@@ -259,6 +259,7 @@ export class GameCore extends GameObject {
     window.addEventListener('keydown', this._keyHandler);
   }
 
+
   // нажатие на кнопки
   _onKeyPress(e) {
     // Проверка - свободна ли игра и нажата ли стрелка
@@ -283,10 +284,11 @@ export class GameCore extends GameObject {
 
       // Проверка условий завершения
       if (this._isWin()) {
-        alert('победа! число 2048 достигнуто :)');
+        alert('Уровень пройден');
+        this._startNewGame();
       }
       if (this._isLose()) {
-        alert('Игра окончена, нет ходов :_(');
+        alert('Нельзя сделать ход');
         this._startNewGame();
       }
     }
