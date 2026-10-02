@@ -257,6 +257,7 @@ export class GameCore extends GameObject {
   _setupInput() {
     this._keyHandler = (e) => this._onKeyPress(e);
     window.addEventListener('keydown', this._keyHandler);
+    this._onMousInput();
   }
 
 
@@ -304,20 +305,33 @@ export class GameCore extends GameObject {
   // обработка управления мышкой
   _onMousInput() {
     let isMouseDown = false;
+    let x = 0;
+    let y = 0;
 
     this.canvas.addEventListener('mousedown', (e) => {
       isMouseDown = true;
-
+      x = e.clientX - this.canvas.offsetLeft;
+      y = e.clientY - this.canvas.offsetTop;
     });
 
-    this.canvas.addEventListener('mousemove', (e) => {
-      if (isMouseDown) {
+    // this.canvas.addEventListener('mousemove', (e) => {
+    //   if (isMouseDown) {
 
-      }
-    });
+    //   }
+    // });
 
-    this.canvas.addEventListener('mouseup', () => {
+    this.canvas.addEventListener('mouseup', (e) => {
       isMouseDown = false;
+
+      const xDelta = x - (e.clientX - this.canvas.offsetLeft);
+      const yDelta = y - (y = e.clientY - this.canvas.offsetTop);
+
+      if (x - (e.clientX - this.canvas.offsetLeft) < 0){
+        console.log('сдвинул вправо');
+      }else if (x - (e.clientX - this.canvas.offsetLeft) > 0){
+        console.log('сдвинул влево');
+      }
+
     });
 
   }
