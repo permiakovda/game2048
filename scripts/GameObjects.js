@@ -36,8 +36,7 @@ export class GameField extends GameObject {
   // Установка значения в конкретную ячейку
   setCell(row, col, number) {
     if (!this.isValidCoords(row, col)) {
-      console.error(`Ошибка: координаты [${row}, ${col}] выходят за пределы поля.`);
-      return false;
+      return false; // выход за гранцы игрового поля
     }
     this.matrix[row][col] = number;
     return true;
@@ -60,7 +59,7 @@ export class GameField extends GameObject {
   clear(value = 0) {
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
-        this.matrix[r][c] = value;
+        this.setCell(r, c, value);
       }
     }
   }
@@ -88,7 +87,7 @@ export class GameField extends GameObject {
     const [row, col] = emptyTiles[randomIndex];
 
     // 3. Заполняем её плиткой
-    this.matrix[row][col] = this._getTileNumber();
+    this.setCell(row, col, this._getTileNumber())
   }
 
   _getTileNumber() {
@@ -106,21 +105,19 @@ export class GameField extends GameObject {
     if (key === 'ArrowRight') {
       result = this._slideMatrixRight(this.matrix);
       this.matrix = result.shiftedMatrix;
-    }else if (key === 'ArrowDown') {
+    } else if (key === 'ArrowDown') {
       result = this._slideMatrixRight(this._rotateMatrix(this.matrix, 'ccw'));
       this.matrix = this._rotateMatrix(result.shiftedMatrix, 'cw');
-    }else if (key === 'ArrowLeft') {
+    } else if (key === 'ArrowLeft') {
       result = this._slideMatrixRight(this._rotateMatrix(this._rotateMatrix(this.matrix, 'ccw'), 'ccw'));
       this.matrix = this._rotateMatrix(this._rotateMatrix(result.shiftedMatrix, 'cw'), 'cw');
-    }else if (key === 'ArrowUp') {
+    } else if (key === 'ArrowUp') {
       result = this._slideMatrixRight(this._rotateMatrix(this.matrix, 'cw'));
       this.matrix = this._rotateMatrix(result.shiftedMatrix, 'ccw');
     }
 
     // паттерн для сравнения матриц
     const moved = !(JSON.stringify(this.matrix) === JSON.stringify(matrixBeforeMove));
-
-    this.spawnRandomTile();
 
     return { moved: moved, scoreGained: result.scoreGained };
   }
@@ -181,6 +178,51 @@ export class GameField extends GameObject {
     }
     return result;
   }
+
+  // проверка наличия плитки с нужной цифрой (для проверки победы 2048)
+  hasTile(number) {
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        if (this.getCell(r, c) === number) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  // проверка на возможность нового хода (есть хотябы одна пусая клетка или соседние питки можно объеденить)
+  hasAvailableMoves() {
+
+    for (let i = 0; i < this.matrix.length; i++) {
+      for (let j = 0; j < this.matrix[i].length; j++) {
+        if (this.matrix[i][j] === 0) {
+          return true;
+        }
+      }
+    }
+
+    // проверка на наличия пары по горизонтали
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols - 1; c++) {
+        if (this.matrix[r][c] === this.matrix[r][c + 1]) {
+          return true;
+        }
+      }
+    }
+
+    // проверка на наличия пары по вертикали
+    for (let r = 0; r < this.rows - 1; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        if (this.matrix[r][c] === this.matrix[r + 1][c]) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
 }
 
 // класс игрового ядра
@@ -227,19 +269,19 @@ export class GameCore extends GameObject {
     // 4. Выполняем логику сдвига в классе GameField
     const moveResult = this.field.move(e.key);
 
-    // if (moveResult.moved) {
-    //   // 5. Если поле изменилось: обновляем счет
-    //   this.score += moveResult.scoreGained;
+    if (moveResult.moved) {
+      // 5. Если поле изменилось: обновляем счет
+      this.score += moveResult.scoreGained;
 
-    //   // 6. Добавляем новый тайл (это делает поле, но триггерит Game)
-    //   this.field.spawnRandomTile();
+      // 6. Добавляем новый тайл (это делает поле, но триггерит Game)
+      this.field.spawnRandomTile();
 
-    //   // 7. Проверка условий завершения
-    //   if (this._checkGameOver()) {
-    //     console.log('Игра окончена!');
-    //     return;
-    //   }
-    // }
+      // 7. Проверка условий завершения
+      if (this._checkGameOver()) {
+        console.log('Игра окончена!');
+        return;
+      }
+    }
 
     // 8. Разрешаем новый ход. 
     // В реальной игре здесь должна быть задержка на анимацию (setTimeout)
