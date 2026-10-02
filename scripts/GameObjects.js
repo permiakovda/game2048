@@ -52,7 +52,7 @@ export class GameField extends GameObject {
 
   // Получить копию матрицы (полная копия без ссылок на исходные данные)
   getMatrixCopy() {
-    return JSON.parse(JSON.stringify(this.matrix))
+    return JSON.parse(JSON.stringify(this.matrix));
   }
 
   // Очистка всего поля до базового значения
@@ -68,7 +68,7 @@ export class GameField extends GameObject {
   spawnRandomTile() {
     const emptyTiles = [];
 
-    // 1. Проходим по всему массиву и собираем координаты пустых ячеек
+    // Проходим по всему массиву и собираем координаты пустых ячеек
     for (let i = 0; i < this.matrix.length; i++) {
       for (let j = 0; j < this.matrix[i].length; j++) {
         if (this.matrix[i][j] == 0) {
@@ -82,14 +82,15 @@ export class GameField extends GameObject {
       return null;
     }
 
-    // 2. Выбираем случайную ячейку из списка
+    // Выбираем случайную ячейку из списка
     const randomIndex = Math.floor(Math.random() * emptyTiles.length);
     const [row, col] = emptyTiles[randomIndex];
 
-    // 3. Заполняем её плиткой
-    this.setCell(row, col, this._getTileNumber())
+    // Заполняем пустую ячейку числом
+    this.setCell(row, col, this._getTileNumber());
   }
 
+  // получить случайное число с вероятностью
   _getTileNumber() {
     if (Math.random() < 0.9) {
       return 2;
@@ -98,6 +99,7 @@ export class GameField extends GameObject {
     }
   }
 
+  // смещение плиток вверх, вниз, влево, вправо
   move(key) {
     const matrixBeforeMove = this.getMatrixCopy();
     let result = { moved: false, scoreGained: 0 };
@@ -241,6 +243,7 @@ export class GameCore extends GameObject {
     this._startNewGame();                               // Инициализация
   }
 
+  // запуск нововй игры
   _startNewGame() {
     this.score = 0;
     this.field.clear(0);
@@ -250,52 +253,63 @@ export class GameCore extends GameObject {
     this._render();
   }
 
+  // Используем один обработчик на все нажатия
   _setupInput() {
-    // Используем один обработчик на все нажатия
-    window.addEventListener('keydown', (e) => this._onKeyPress(e));
+    this._keyHandler = (e) => this._onKeyPress(e);
+    window.addEventListener('keydown', this._keyHandler);
   }
 
+  // нажатие на кнопки
   _onKeyPress(e) {
-    // 1. Проверка: свободна ли игра и нажата ли стрелка
+    // Проверка - свободна ли игра и нажата ли стрелка
     if (!this.isWaitingInput || !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
       return;
     }
 
     e.preventDefault(); // Блокируем прокрутку страницы
 
-    // 2. Блокируем ввод на время хода
+    // Блокируем ввод на время хода
     this.isWaitingInput = false;
 
-    // 4. Выполняем логику сдвига в классе GameField
+    // Выполняем логику сдвига в классе GameField
     const moveResult = this.field.move(e.key);
 
     if (moveResult.moved) {
-      // 5. Если поле изменилось: обновляем счет
+      // Если поле изменилось: обновляем счет
       this.score += moveResult.scoreGained;
 
-      // 6. Добавляем новый тайл (это делает поле, но триггерит Game)
+      // Добавляем новый тайл
       this.field.spawnRandomTile();
 
-      // 7. Проверка условий завершения
-      if (this._checkGameOver()) {
-        console.log('Игра окончена!');
-        return;
+      // Проверка условий завершения
+      if (this._isWin()) {
+        alert('победа! число 2048 достигнуто :)');
+      }
+      if (this._isLose()) {
+        alert('Игра окончена, нет ходов :_(');
+        this._startNewGame();
       }
     }
 
-    // 8. Разрешаем новый ход. 
+    // Разрешаем новый ход. 
     // В реальной игре здесь должна быть задержка на анимацию (setTimeout)
     this.isWaitingInput = true;
 
-    // 9. Перерисовка UI
+    // Перерисовка графики
     this._render();
   }
 
-  _checkGameOver() {
-    // Проверка на 2048 (победа) или отсутствие возможных ходов
-    return this.field.hasTile(2048) || !this.field.hasAvailableMoves();
+  // проверка на победу (число 2048 достигнуто)
+  _isWin() {
+    return this.field.hasTile(2048);
   }
 
+  // проверка проигрыш (нету пустых ячеек или нет возможных пар для соединения)
+  _isLose() {
+    return !this.field.hasAvailableMoves();
+  }
+
+  // отрисовка игры
   _render() {
     this.fieldClearFunction(this.canvas);
 
@@ -312,6 +326,12 @@ export class GameCore extends GameObject {
         }
       }
     }
+  }
+
+  // отписаться от функции обработчика нажатия на клавиши, что бы те работали как по умолчанию
+  destroy() {
+    window.removeEventListener('keydown', this._keyHandler);
+    super.destroy();
   }
 }
 
