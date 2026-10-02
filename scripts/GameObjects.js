@@ -301,6 +301,27 @@ export class GameCore extends GameObject {
     this._render();
   }
 
+  // обработка управления мышкой
+  _onMousInput() {
+    let isMouseDown = false;
+
+    this.canvas.addEventListener('mousedown', (e) => {
+      isMouseDown = true;
+
+    });
+
+    this.canvas.addEventListener('mousemove', (e) => {
+      if (isMouseDown) {
+
+      }
+    });
+
+    this.canvas.addEventListener('mouseup', () => {
+      isMouseDown = false;
+    });
+
+  }
+
   // проверка на победу (число 2048 достигнуто)
   _isWin() {
     return this.field.hasTile(2048);
