@@ -9,6 +9,10 @@ const fieldCols = parseInt(getComputedStyle(document.documentElement).getPropert
 
 // загрузка доступных цветов
 let TILE_COLORS = null;
+
+/**
+ * загрузка цвета для игры из настроичного файла
+ */
 function loadTileColors() {
     const cs = getComputedStyle(document.documentElement);
     const get = (name) => cs.getPropertyValue(name).trim();
@@ -27,13 +31,25 @@ function loadTileColors() {
     };
 }
 
-// выбора цвета заднего фона плитки
+/**
+ * выбор цвета заднего фона игрововй плитки, для этого числа подбирается соответствующий цвет заднего фона
+ *
+ * @param {number} number - число на игровой плитке 
+ */
 function tileColorSetBG(number) {
     if (!TILE_COLORS) loadTileColors();
     return TILE_COLORS[number] ?? TILE_COLORS[2048];
 }
 
-// рисование закругленного прямоугольника
+/**
+ * рисование закругленного прямоугольника
+ *
+ * @param {number} ctx - ширина холста (px)
+ * @param {number} x - коорлиниата x (верхний левый угол игрововй плитки)
+ * @param {number} y - коорлиниата y (верхний левый угол игрововй плитки)
+ * @param {number} side - ширина игрововй плитки
+ * @param {number} r - радиус скругления (px)
+ */
 function drawRoundedRect(ctx, x, y, side, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -48,7 +64,12 @@ function drawRoundedRect(ctx, x, y, side, r) {
     ctx.closePath();
 }
 
-// расчет размеров игровой плитки
+/**
+ * расчет размеров игровой плитки
+ *
+ * @param {number} whidth - ширина холста (px)
+ * @param {number} cols - количество столбцов в игре (челое число)
+ */
 function getTileSize(whidth = fieldWidth, cols = fieldCols){
     return whidth / cols;
 }
@@ -148,11 +169,24 @@ function gameTileRender(row, col, ctx, number = 2, radius = borderRadius, paddin
     }
 }
 
+/**
+ * Чистка игрового поля
+ *
+ * @param {HTMLCanvasElement} canvas - ссылка на холст. 
+ */
 function gameFieldClear(canvas){
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 }
 
+/**
+ * Отрисовывает игровых очков
+ *
+ * @param {HTMLElement|string} [parent=document.body] - Родительский узел или его селектор.
+ */
 
+function gameScoreRender(parent){
+
+}
 
 
 export { gameFieldRender, gameTileRender, gameFieldClear };

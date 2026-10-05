@@ -19,10 +19,4 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   // подготовка игрового поля
   const gameCore = new GameCore(rows, cols, context2d.canvas, gameTileRender, gameFieldClear);
-
-  
-
-
-
-
 });
