@@ -263,7 +263,7 @@ export class GameCore extends GameObject {
   // нажатие на кнопки
   _onKeyPress(e) {
     // Проверка - свободна ли игра и нажата ли стрелка
-    if (!this.isWaitingInput || !['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+    if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
       return;
     }
 
@@ -272,17 +272,17 @@ export class GameCore extends GameObject {
     this._handleMove(e.key)
   }
 
-  // обработка управления мышкой
+  // обработка управления мышкой и тачпадом
   _setupMouseInput() {
     let startX = 0;
     let startY = 0;
 
-    this.canvas.addEventListener('mousedown', (e) => {
+    this.canvas.addEventListener('pointerdown', (e) => {
       startX = e.clientX - this.canvas.offsetLeft;
       startY = e.clientY - this.canvas.offsetTop;
     });
 
-    this.canvas.addEventListener('mouseup', (e) => {
+    this.canvas.addEventListener('pointerup', (e) => {
       const xDelta = startX - (e.clientX - this.canvas.offsetLeft);
       const yDelta = startY - (e.clientY - this.canvas.offsetTop);
       const MIN_SWIPE = 30;                                         // минимальная длина свайпа в пикселях
@@ -305,6 +305,10 @@ export class GameCore extends GameObject {
 
   // обработка игрововго хода
   _handleMove(direction) {
+    if (!this.isWaitingInput) {
+      return;                     // отменить если игра не готова к ходу (для анимации)
+    }
+
     // Блокируем ввод на время хода
     this.isWaitingInput = false;
 
@@ -337,55 +341,40 @@ export class GameCore extends GameObject {
     this._render();
   };
 
+  // проверка на победу (число 2048 достигнуто)
+  _isWin() {
+    return this.field.hasTile(2048);
+  }
 
+  // проверка проигрыш (нету пустых ячеек или нет возможных пар для соединения)
+  _isLose() {
+    return !this.field.hasAvailableMoves();
+  }
 
-// проверка на победу (число 2048 достигнуто)
-_isWin() {
-  return this.field.hasTile(2048);
-}
+  // отрисовка игры
+  _render() {
+    this.fieldClearFunction(this.canvas);
 
-// проверка проигрыш (нету пустых ячеек или нет возможных пар для соединения)
-_isLose() {
-  return !this.field.hasAvailableMoves();
-}
+    for (let i = 0; i < this.field.matrix.length; i++) {
+      for (let j = 0; j < this.field.matrix[i].length; j++) {
+        if (this.field.matrix[i][j] !== 0) {
 
-// отрисовка игры
-_render() {
-  this.fieldClearFunction(this.canvas);
-
-  for (let i = 0; i < this.field.matrix.length; i++) {
-    for (let j = 0; j < this.field.matrix[i].length; j++) {
-      if (this.field.matrix[i][j] !== 0) {
-
-        this.tileRenderFunction(
-          i,
-          j,
-          this.ctx,
-          this.field.matrix[i][j],
-        );
+          this.tileRenderFunction(
+            i,
+            j,
+            this.ctx,
+            this.field.matrix[i][j],
+          );
+        }
       }
     }
   }
+
+  // отписаться от функции обработчика нажатия на клавиши и мышки, что бы те работали как по умолчанию
+  destroy() {
+    window.removeEventListener('keydown', this._keyHandler);
+    this.canvas.removeEventListener('pointerdown', this._onMouseDown);
+    this.canvas.removeEventListener('pointerup', this._onMouseUp);
+    super.destroy();
+  }
 }
-
-// отписаться от функции обработчика нажатия на клавиши и мышки, что бы те работали как по умолчанию
-destroy() {
-  window.removeEventListener('keydown', this._keyHandler);
-  this.canvas.removeEventListener('mousedown', this._onMouseDown);
-  this.canvas.removeEventListener('mouseup', this._onMouseUp);
-  super.destroy();
-}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
