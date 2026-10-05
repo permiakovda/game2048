@@ -303,7 +303,7 @@ export class GameCore extends GameObject {
     });
   }
 
-
+  // обработка игрововго хода
   _handleMove(direction) {
     // Блокируем ввод на время хода
     this.isWaitingInput = false;
@@ -368,9 +368,11 @@ _render() {
   }
 }
 
-// отписаться от функции обработчика нажатия на клавиши, что бы те работали как по умолчанию
+// отписаться от функции обработчика нажатия на клавиши и мышки, что бы те работали как по умолчанию
 destroy() {
   window.removeEventListener('keydown', this._keyHandler);
+  this.canvas.removeEventListener('mousedown', this._onMouseDown);
+  this.canvas.removeEventListener('mouseup', this._onMouseUp);
   super.destroy();
 }
 }
