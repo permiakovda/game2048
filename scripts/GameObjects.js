@@ -253,13 +253,12 @@ export class GameCore extends GameObject {
     this._render();
   }
 
-  // Используем один обработчик на все нажатия
+  // управление игрой
   _setupInput() {
-    this._keyHandler = (e) => this._onKeyPress(e);
+    this._keyHandler = (e) => this._onKeyPress(e); // Используем один обработчик на все нажатия
     window.addEventListener('keydown', this._keyHandler);
-    this._onMousInput();
+    this._setupMouseInput();
   }
-
 
   // нажатие на кнопки
   _onKeyPress(e) {
@@ -270,11 +269,47 @@ export class GameCore extends GameObject {
 
     e.preventDefault(); // Блокируем прокрутку страницы
 
+    this._handleMove(e.key)
+  }
+
+  // обработка управления мышкой
+  _setupMouseInput() {
+    let startX = 0;
+    let startY = 0;
+
+    this.canvas.addEventListener('mousedown', (e) => {
+      startX = e.clientX - this.canvas.offsetLeft;
+      startY = e.clientY - this.canvas.offsetTop;
+    });
+
+    this.canvas.addEventListener('mouseup', (e) => {
+      const xDelta = startX - (e.clientX - this.canvas.offsetLeft);
+      const yDelta = startY - (e.clientY - this.canvas.offsetTop);
+      const MIN_SWIPE = 30;                                         // минимальная длина свайпа в пикселях
+
+      if (Math.abs(xDelta) > MIN_SWIPE || Math.abs(yDelta) > MIN_SWIPE) {
+        if (xDelta < 0 && (Math.abs(xDelta) >= Math.abs(yDelta))) {
+          this._handleMove('ArrowRight');
+        } else if (xDelta > 0 && (Math.abs(xDelta) >= Math.abs(yDelta))) {
+          this._handleMove('ArrowLeft');
+        } else if (yDelta > 0 && (Math.abs(yDelta) >= Math.abs(xDelta))) {
+          this._handleMove('ArrowUp');
+        } else if (yDelta < 0 && (Math.abs(yDelta) >= Math.abs(xDelta))) {
+          this._handleMove('ArrowDown');
+        } else {
+          return null;
+        }
+      }
+    });
+  }
+
+
+  _handleMove(direction) {
     // Блокируем ввод на время хода
     this.isWaitingInput = false;
 
     // Выполняем логику сдвига в классе GameField
-    const moveResult = this.field.move(e.key);
+    const moveResult = this.field.move(direction);
 
     if (moveResult.moved) {
       // Если поле изменилось: обновляем счет
@@ -295,81 +330,49 @@ export class GameCore extends GameObject {
     }
 
     // Разрешаем новый ход. 
-    // В реальной игре здесь должна быть задержка на анимацию (setTimeout)
+    // загатовка под анимации
     this.isWaitingInput = true;
 
     // Перерисовка графики
     this._render();
-  }
+  };
 
-  // обработка управления мышкой
-  _onMousInput() {
-    let isMouseDown = false;
-    let x = 0;
-    let y = 0;
 
-    this.canvas.addEventListener('mousedown', (e) => {
-      isMouseDown = true;
-      x = e.clientX - this.canvas.offsetLeft;
-      y = e.clientY - this.canvas.offsetTop;
-    });
 
-    // this.canvas.addEventListener('mousemove', (e) => {
-    //   if (isMouseDown) {
+// проверка на победу (число 2048 достигнуто)
+_isWin() {
+  return this.field.hasTile(2048);
+}
 
-    //   }
-    // });
+// проверка проигрыш (нету пустых ячеек или нет возможных пар для соединения)
+_isLose() {
+  return !this.field.hasAvailableMoves();
+}
 
-    this.canvas.addEventListener('mouseup', (e) => {
-      isMouseDown = false;
+// отрисовка игры
+_render() {
+  this.fieldClearFunction(this.canvas);
 
-      const xDelta = x - (e.clientX - this.canvas.offsetLeft);
-      const yDelta = y - (y = e.clientY - this.canvas.offsetTop);
+  for (let i = 0; i < this.field.matrix.length; i++) {
+    for (let j = 0; j < this.field.matrix[i].length; j++) {
+      if (this.field.matrix[i][j] !== 0) {
 
-      if (x - (e.clientX - this.canvas.offsetLeft) < 0){
-        console.log('сдвинул вправо');
-      }else if (x - (e.clientX - this.canvas.offsetLeft) > 0){
-        console.log('сдвинул влево');
-      }
-
-    });
-
-  }
-
-  // проверка на победу (число 2048 достигнуто)
-  _isWin() {
-    return this.field.hasTile(2048);
-  }
-
-  // проверка проигрыш (нету пустых ячеек или нет возможных пар для соединения)
-  _isLose() {
-    return !this.field.hasAvailableMoves();
-  }
-
-  // отрисовка игры
-  _render() {
-    this.fieldClearFunction(this.canvas);
-
-    for (let i = 0; i < this.field.matrix.length; i++) {
-      for (let j = 0; j < this.field.matrix[i].length; j++) {
-        if (this.field.matrix[i][j] !== 0) {
-
-          this.tileRenderFunction(
-            i,
-            j,
-            this.ctx,
-            this.field.matrix[i][j],
-          );
-        }
+        this.tileRenderFunction(
+          i,
+          j,
+          this.ctx,
+          this.field.matrix[i][j],
+        );
       }
     }
   }
+}
 
-  // отписаться от функции обработчика нажатия на клавиши, что бы те работали как по умолчанию
-  destroy() {
-    window.removeEventListener('keydown', this._keyHandler);
-    super.destroy();
-  }
+// отписаться от функции обработчика нажатия на клавиши, что бы те работали как по умолчанию
+destroy() {
+  window.removeEventListener('keydown', this._keyHandler);
+  super.destroy();
+}
 }
 
 
