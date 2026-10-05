@@ -5,10 +5,13 @@ const rows = Number(getComputedStyle(document.documentElement).getPropertyValue(
 const cols = Number(getComputedStyle(document.documentElement).getPropertyValue('--game-cols'));
 
 // импорт модулей игры
-import { gameFieldRender, gameTileRender, gameFieldClear } from "./visualRender.js";
+import { gameFieldRender, gameTileRender, gameFieldClear, gameScoreRender, gameScoreChange } from "./visualRender.js";
 import { GameCore } from './GameObjects.js';
 
 document.addEventListener("DOMContentLoaded", (event) => {
+  //отрисовка очков
+  const scoreElem = gameScoreRender(document.querySelector('.main'));
+
   //отрисовка холста для игры
   const context2d = gameFieldRender({
     width: fieldWidth,
@@ -17,6 +20,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     parent: document.querySelector('.main'),
   });
 
+
   // подготовка игрового поля
-  const gameCore = new GameCore(rows, cols, context2d.canvas, gameTileRender, gameFieldClear);
+  const gameCore = new GameCore(rows, cols, context2d.canvas, scoreElem, gameTileRender, gameFieldClear, gameScoreChange);
 });

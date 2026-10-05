@@ -1,15 +1,25 @@
 ﻿@import '../config/config.css';
 
-/* var(--colors-border) */
-
-/* :root {
-  --colors-border: #9e9e9e;
-} */
-
 .game-canvas{
     border: 5px solid var(--colors-border);
     border-radius: var(--border-radius);
     background-color: var(--colors-gameFildBG);
     display: block;
     margin: 0 auto;
+}
+
+.score-container{
+    width: 250px;
+    margin: 20px auto;
+    padding: 10px;
+    border: 5px solid var(--colors-border);
+    border-radius: 50px;
+    background-color: var(--colors-gameScoreBG);
+}
+
+.score-text {
+  margin: 0;
+  text-align: center;
+  font-weight: 500;
+  font-size: 1.5em;
 }

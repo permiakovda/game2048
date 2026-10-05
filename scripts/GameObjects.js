@@ -154,8 +154,8 @@ export class GameField extends GameObject {
   }
 
   // паттерн поворот игровой матрицы почасовой и против часовой стрелки
-  // rotate(matrix, 'cw')  — по часовой
-  // rotate(matrix, 'ccw') — против часовой
+  // 'cw'  — по часовой
+  // 'ccw' — против часовой
   _rotateMatrix(matrix, direction = 'cw') {
     if (!matrix.length) return [];
 
@@ -229,13 +229,15 @@ export class GameField extends GameObject {
 
 // класс игрового ядра
 export class GameCore extends GameObject {
-  constructor(rows, cols, canvas, tileRenderFunction, fieldClearFunction) {
+  constructor(rows, cols, canvas, scoreElem, tileRenderFunction, fieldClearFunction, scoreChangeFunction) {
     super();                         // размер плитки
     this.field = new GameField(rows, cols);             // создание игрового поля
     this.canvas = canvas;                               // ссылка на канвас
     this.ctx = this.canvas.getContext('2d');            // ссылка на контекст для рисования
+    this.scoreElem = scoreElem;                         // ссылка на элемент игровых очков
     this.tileRenderFunction = tileRenderFunction;       // функция рисования
     this.fieldClearFunction = fieldClearFunction;       // функция чистки канваса
+    this.scoreChangeFunction = scoreChangeFunction;     // функция изменения игровых очков
     this.score = 0;                                     // очки
     this.isWaitingInput = true;                         // Флаг состояния (готов к ходу игрока или крутит анимацию / обрабатывает)
 
@@ -318,6 +320,9 @@ export class GameCore extends GameObject {
     if (moveResult.moved) {
       // Если поле изменилось: обновляем счет
       this.score += moveResult.scoreGained;
+
+      // меняем очки в игре
+      this.scoreChangeFunction(this.scoreElem, this.score);
 
       // Добавляем новый тайл
       this.field.spawnRandomTile();

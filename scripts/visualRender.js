@@ -70,7 +70,7 @@ function drawRoundedRect(ctx, x, y, side, r) {
  * @param {number} whidth - ширина холста (px)
  * @param {number} cols - количество столбцов в игре (челое число)
  */
-function getTileSize(whidth = fieldWidth, cols = fieldCols){
+function getTileSize(whidth = fieldWidth, cols = fieldCols) {
     return whidth / cols;
 }
 
@@ -133,7 +133,7 @@ function gameTileRender(row, col, ctx, number = 2, radius = borderRadius, paddin
     const size = getTileSize();
     const coordinateX = col * size;
     const coordinateY = row * size;
-    
+
     // Ограничиваем отступ: он не может быть меньше 0 и больше половины размера минус 1px (для минимального внутреннего квадрата)
     const actualPadding = Math.max(0, Math.min(padding, (size - 1) / 2));
 
@@ -148,17 +148,17 @@ function gameTileRender(row, col, ctx, number = 2, radius = borderRadius, paddin
     const innerX = coordinateX + actualPadding;
     const innerY = coordinateY + actualPadding;
 
-    // 1. Рисуем внешнюю рамку (тень/границу)
+    // Рисуем внешнюю рамку (тень/границу)
     ctx.fillStyle = 'rgba(0, 0, 0, 0)';
     drawRoundedRect(ctx, coordinateX, coordinateY, size, safeRadiusFull);
     ctx.fill();
 
-    // 2. Рисуем основную плитку поверх рамки со смещением
+    // Рисуем основную плитку поверх рамки со смещением
     ctx.fillStyle = tileColorSetBG(number);
     drawRoundedRect(ctx, innerX, innerY, innerSize, safeRadiusInner);
     ctx.fill();
 
-    // 3. Опционально: выводим число по центру всей области (визуально будет по центру внутренней плитки)
+    // выводим число по центру всей области (визуально будет по центру внутренней плитки)
     if (number !== undefined && number !== null && number.toString().trim() !== '') {
         ctx.fillStyle = '#000';
         // Размер шрифта привязан к доступной внутренней площади для сохранения пропорций
@@ -174,7 +174,7 @@ function gameTileRender(row, col, ctx, number = 2, radius = borderRadius, paddin
  *
  * @param {HTMLCanvasElement} canvas - ссылка на холст. 
  */
-function gameFieldClear(canvas){
+function gameFieldClear(canvas) {
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
 }
 
@@ -183,10 +183,34 @@ function gameFieldClear(canvas){
  *
  * @param {HTMLElement|string} [parent=document.body] - Родительский узел или его селектор.
  */
+function gameScoreRender(parent) {
+    // Создаём новый элемент div
+    const scoreContainer = document.createElement('div');
+    const scoreText = document.createElement('p');
+    const score = document.createElement('span');
 
-function gameScoreRender(parent){
+    // Можно сразу задать атрибуты или дочерние элементы
+    scoreContainer.className = 'score-container';
+    scoreText.className = 'score-text';
+    scoreText.innerHTML = 'СЧЁТ: ';
+    score.className = 'score';
+    score.innerHTML = '0';
 
+    // Теперь нужно вставить его в документ
+    scoreContainer.appendChild(scoreText);
+    scoreText.appendChild(score);
+    parent.appendChild(scoreContainer);
+    return score;
 }
 
+/**
+ * изменение очков
+ *
+ * @param {HTMLElement|string} [scoreElem] - элемент которым написаны очки
+ * @param {string} [score] - количество очков
+ */
+function gameScoreChange(scoreElem, score) {
+    scoreElem.textContent = score;
+}
 
-export { gameFieldRender, gameTileRender, gameFieldClear };
+export { gameFieldRender, gameTileRender, gameFieldClear, gameScoreRender, gameScoreChange };
