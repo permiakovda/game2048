@@ -279,12 +279,12 @@ export class GameCore extends GameObject {
     let startX = 0;
     let startY = 0;
 
-    this.canvas.addEventListener('pointerdown', (e) => {
+    this._onPointerDown = (e) => {
       startX = e.clientX - this.canvas.offsetLeft;
       startY = e.clientY - this.canvas.offsetTop;
-    });
+    };
 
-    this.canvas.addEventListener('pointerup', (e) => {
+    this._onPointerUp = (e) => {
       const xDelta = startX - (e.clientX - this.canvas.offsetLeft);
       const yDelta = startY - (e.clientY - this.canvas.offsetTop);
       const MIN_SWIPE = 30;                                         // минимальная длина свайпа в пикселях
@@ -302,7 +302,10 @@ export class GameCore extends GameObject {
           return null;
         }
       }
-    });
+    };
+
+    this.canvas.addEventListener('pointerdown', this._onPointerDown);
+    window.addEventListener('pointerup', this._onPointerUp);
   }
 
   // обработка игрововго хода
@@ -380,6 +383,8 @@ export class GameCore extends GameObject {
     window.removeEventListener('keydown', this._keyHandler);
     this.canvas.removeEventListener('pointerdown', this._onMouseDown);
     this.canvas.removeEventListener('pointerup', this._onMouseUp);
+    this.canvas.removeEventListener('pointerdown', this._onPointerDown);
+    window.removeEventListener('pointerup', this._onPointerUp);
     super.destroy();
   }
 }
